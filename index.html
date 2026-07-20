@@ -346,63 +346,21 @@
     .stamp-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* PAINEL DO GESTOR */
-    .manager-dashboard {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
+    .manager-dashboard { display: flex; flex-direction: column; gap: 20px; }
     .team-table-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      box-shadow: var(--shadow-md);
-      overflow-x: auto;
+      background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-md);
+      padding: 20px; box-shadow: var(--shadow-md); overflow-x: auto;
     }
 
-    .table-title {
-      font-family: var(--font-serif);
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .team-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    .team-table th {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      padding: 10px 12px;
-      border-bottom: 2px solid var(--border-card);
-    }
-
-    .team-table td {
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--border-card);
-      font-size: 0.9rem;
-      vertical-align: middle;
-    }
+    .table-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; margin-bottom: 16px; }
+    .team-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .team-table th { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); padding: 10px 12px; border-bottom: 2px solid var(--border-card); }
+    .team-table td { padding: 14px 12px; border-bottom: 1px solid var(--border-card); font-size: 0.9rem; vertical-align: middle; }
 
     .member-info { display: flex; align-items: center; gap: 10px; }
     .member-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: var(--bg-main);
-      border: 1px solid var(--border-card);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      color: var(--text-main);
+      width: 36px; height: 36px; border-radius: 50%; background-color: var(--bg-main); border: 1px solid var(--border-card);
+      display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 600; color: var(--text-main);
     }
 
     /* MODAL DE AUTENTICACAO, CONFIG E SELECAO */
@@ -469,7 +427,7 @@
         <div class="header-title-group">
           <span class="header-badge">Gestão de Frequência & Presença</span>
           <h1 class="header-title">Agenda Inteligente</h1>
-          <p class="header-subtitle">Monitore a presença presencial, remota e de equipe com facilidade</p>
+          <p class="header-subtitle">Monitore a presença presencial, remota e de equipe com autenticação via E-mail</p>
         </div>
 
         <div class="header-actions">
@@ -629,7 +587,7 @@
     </div>
 
     <footer class="app-footer">
-      <span id="footerStorageInfo">Agenda Inteligente &bull; Conectado ao Firebase Cloud Store</span>
+      <span id="footerStorageInfo">Agenda Inteligente &bull; Autenticação por E-mail e Senha ativa</span>
     </footer>
 
   </div>
@@ -675,7 +633,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE AUTENTICACAO (LOGIN / CADASTRO) -->
+  <!-- MODAL DE AUTENTICACAO (EMAIL E SENHA) -->
   <div id="authModalOverlay" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -686,27 +644,31 @@
       <form id="authForm" style="display: flex; flex-direction: column; gap: 14px;">
         <div id="nameGroup" class="form-group" style="display: none;">
           <label class="form-label" for="authName">Nome Completo</label>
-          <input type="text" id="authName" class="form-input" placeholder="Seu nome">
+          <input type="text" id="authName" class="form-input" placeholder="Ex: Maria Silva">
         </div>
 
         <div class="form-group">
           <label class="form-label" for="authEmail">E-mail</label>
-          <input type="email" id="authEmail" class="form-input" placeholder="seu@email.com" required>
+          <input type="email" id="authEmail" class="form-input" placeholder="seu.email@empresa.com" required>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="authPassword">Senha</label>
-          <input type="password" id="authPassword" class="form-input" placeholder="Mínimo 6 caracteres" required>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="authPassword">Senha</label>
+            <a href="#" id="btnForgotPassword" style="font-size: 0.75rem; color: var(--color-presencial); text-decoration: none;">Esqueceu a senha?</a>
+          </div>
+          <input type="password" id="authPassword" class="form-input" placeholder="Sua senha de acesso" required>
         </div>
 
         <div id="roleGroup" class="form-group" style="display: none;">
-          <label class="form-label" for="authRole">Perfil / Função</label>
+          <label class="form-label" for="authRole">Perfil de Acesso</label>
           <select id="authRole" class="form-select">
             <option value="colaborador">👤 Colaborador (Registrar presença individual)</option>
             <option value="gestor">👔 Gestor (Registrar e Monitorar Equipe)</option>
           </select>
         </div>
 
+        <div id="authSuccess" style="color: var(--color-homeoffice); font-size: 0.8rem; display: none;"></div>
         <div id="authError" style="color: var(--color-falta); font-size: 0.8rem; display: none;"></div>
 
         <button type="submit" id="btnAuthSubmit" class="btn btn-primary" style="width: 100%; padding: 10px;">Entrar</button>
@@ -728,11 +690,11 @@
       </div>
 
       <p style="font-size: 0.85rem; color: var(--text-muted);">
-        Cole abaixo o objeto <code>firebaseConfig</code> fornecido pelo seu console do Firebase (veja o arquivo <code>passo_a_passo_firebase.md</code>):
+        Cole abaixo o objeto <code>firebaseConfig</code> do seu console do Firebase (veja o arquivo <code>passo_a_passo_firebase.md</code>):
       </p>
 
       <div class="form-group">
-        <label class="form-label" for="firebaseConfigInput">firebaseConfig JSON / Objeto:</label>
+        <label class="form-label" for="firebaseConfigInput">firebaseConfig JSON:</label>
         <textarea id="firebaseConfigInput" class="form-input" style="min-height: 140px; font-family: var(--font-mono); font-size: 0.8rem;" placeholder='{
   "apiKey": "AIzaSy...",
   "authDomain": "seu-app.firebaseapp.com",
@@ -760,6 +722,18 @@
         presencial: { label: 'Presencial', icon: '🏢', class: 'presencial' },
         home_office: { label: 'Home Office', icon: '🏠', class: 'homeoffice' },
         falta: { label: 'Falta', icon: '❌', class: 'falta' }
+      };
+
+      // Dicionário de Tradução de Erros do Firebase Auth
+      const AUTH_ERROR_MAP = {
+        'auth/invalid-email': 'O formato de e-mail digitado é inválido.',
+        'auth/user-not-found': 'Nenhum usuário encontrado com este e-mail.',
+        'auth/wrong-password': 'A senha digitada está incorreta.',
+        'auth/invalid-credential': 'E-mail ou senha incorretos.',
+        'auth/email-already-in-use': 'Este e-mail já está em uso por outra conta.',
+        'auth/weak-password': 'A senha deve conter pelo menos 6 caracteres.',
+        'auth/user-disabled': 'Esta conta de usuário foi desativada.',
+        'auth/too-many-requests': 'Muitas tentativas sem sucesso. Aguarde um momento e tente novamente.'
       };
 
       // Estado
@@ -825,8 +799,10 @@
       const authPasswordInput = document.getElementById('authPassword');
       const authRoleSelect = document.getElementById('authRole');
       const authError = document.getElementById('authError');
+      const authSuccess = document.getElementById('authSuccess');
       const authToggleText = document.getElementById('authToggleText');
       const authToggleLink = document.getElementById('authToggleLink');
+      const btnForgotPassword = document.getElementById('btnForgotPassword');
 
       const configModalOverlay = document.getElementById('configModalOverlay');
       const firebaseConfigInput = document.getElementById('firebaseConfigInput');
@@ -838,12 +814,12 @@
       let isRegistering = false;
 
       // ==========================================================================
-      // INICIALIZACAO DO FIREBASE
+      // INICIALIZACAO DO FIREBASE AUTH & FIRESTORE
       // ==========================================================================
       function initFirebase() {
         const storedConfig = localStorage.getItem('firebase_config_keys');
         if (!storedConfig) {
-          updateConnectionStatus(false, "Modo Local (Sem Firebase)");
+          updateConnectionStatus(false, "Modo Local (Firebase Desconectado)");
           return;
         }
 
@@ -855,6 +831,10 @@
           auth = firebase.auth();
           db = firebase.firestore();
           firebaseOnline = true;
+
+          // Manter sessão persistente no navegador
+          auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
           updateConnectionStatus(true, "Conectado ao Firebase Cloud");
 
           auth.onAuthStateChanged(async (user) => {
@@ -864,13 +844,13 @@
               userInfoEl.style.display = 'inline';
               btnAuthAction.textContent = 'Sair';
 
-              // Buscar role do Firestore
+              // Buscar perfil e função no Firestore
               try {
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 if (userDoc.exists) {
                   userRole = userDoc.data().role || 'colaborador';
                 }
-              } catch (e) { console.error("Erro lendo perfil:", e); }
+              } catch (e) { console.error("Erro ao ler dados do usuário:", e); }
 
               userRoleBadgeEl.textContent = userRole === 'gestor' ? 'Gestor' : 'Colaborador';
               userRoleBadgeEl.className = `role-badge ${userRole}`;
@@ -893,7 +873,7 @@
           });
         } catch (err) {
           console.error("Erro na inicializacao do Firebase:", err);
-          updateConnectionStatus(false, "Erro na Config do Firebase");
+          updateConnectionStatus(false, "Erro de Configuração no Firebase");
         }
       }
 
@@ -925,11 +905,10 @@
               monthData = {};
             }
           } catch (e) {
-            console.error("Erro buscando dados no Firestore:", e);
+            console.error("Erro lendo Firestore:", e);
             monthData = {};
           }
         } else {
-          // LocalStorage Fallback
           const raw = localStorage.getItem(`attendance:${monthKey}`);
           monthData = raw ? JSON.parse(raw) : {};
         }
@@ -951,7 +930,7 @@
               updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
           } catch (e) {
-            console.error("Erro ao salvar no Firestore:", e);
+            console.error("Erro salvando no Firestore:", e);
           }
         } else {
           localStorage.setItem(`attendance:${monthKey}`, JSON.stringify(monthData));
@@ -979,7 +958,6 @@
         const realToday = new Date();
         const isCurrentMonthYear = realToday.getFullYear() === year && realToday.getMonth() === month;
 
-        // Dias do mês anterior
         for (let i = firstDayOfWeek - 1; i >= 0; i--) {
           const card = document.createElement('div');
           card.className = 'day-card other-month';
@@ -987,7 +965,6 @@
           daysGridEl.appendChild(card);
         }
 
-        // Dias do mês atual
         for (let day = 1; day <= totalDaysInMonth; day++) {
           const card = document.createElement('div');
           card.className = 'day-card';
@@ -1064,7 +1041,7 @@
       async function renderTeamDashboard() {
         if (!db || userRole !== 'gestor') return;
 
-        teamTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Carregando dados da equipe...</td></tr>`;
+        teamTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Carregando equipe...</td></tr>`;
 
         try {
           const usersSnapshot = await db.collection('users').get();
@@ -1144,7 +1121,7 @@
       }
 
       // ==========================================================================
-      // EVENTOS DE NAVEGACAO E AUTENTICACAO
+      // EVENTOS DE NAVEGACAO E AUTENTICACAO POR EMAIL E SENHA
       // ==========================================================================
       tabMyCalendar.addEventListener('click', () => {
         inspectModeUser = null;
@@ -1167,6 +1144,8 @@
         if (currentUser) {
           auth.signOut();
         } else {
+          authError.style.display = 'none';
+          authSuccess.style.display = 'none';
           authModalOverlay.classList.add('active');
         }
       });
@@ -1176,6 +1155,8 @@
       authToggleLink.addEventListener('click', (e) => {
         e.preventDefault();
         isRegistering = !isRegistering;
+        authError.style.display = 'none';
+        authSuccess.style.display = 'none';
         authModalTitle.textContent = isRegistering ? 'Criar Nova Conta' : 'Entrar na Agenda';
         nameGroup.style.display = isRegistering ? 'flex' : 'none';
         roleGroup.style.display = isRegistering ? 'flex' : 'none';
@@ -1184,21 +1165,51 @@
         authToggleLink.textContent = isRegistering ? 'Fazer Login' : 'Cadastrar-se';
       });
 
+      // Recuperação de senha por e-mail
+      btnForgotPassword.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const email = authEmailInput.value.trim();
+        authError.style.display = 'none';
+        authSuccess.style.display = 'none';
+
+        if (!email) {
+          authError.textContent = 'Digite seu e-mail no campo acima para redefinir a senha.';
+          authError.style.display = 'block';
+          return;
+        }
+
+        try {
+          await auth.sendPasswordResetEmail(email);
+          authSuccess.textContent = 'E-mail de redefinição enviado com sucesso! Verifique sua caixa de entrada.';
+          authSuccess.style.display = 'block';
+        } catch (err) {
+          authError.textContent = AUTH_ERROR_MAP[err.code] || err.message;
+          authError.style.display = 'block';
+        }
+      });
+
+      // Submissão do Formulário de E-mail e Senha
       authForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         authError.style.display = 'none';
-        const email = authEmailInput.value;
+        authSuccess.style.display = 'none';
+        const email = authEmailInput.value.trim();
         const password = authPasswordInput.value;
 
         if (!firebaseOnline) {
-          alert("Configure o Firebase primeiro clicando em '⚙️ Configurar Firebase'.");
+          alert("Por favor, configure o Firebase primeiro clicando no botão '⚙️ Configurar Firebase'.");
           return;
         }
 
         try {
           if (isRegistering) {
-            const name = authNameInput.value;
+            const name = authNameInput.value.trim();
             const role = authRoleSelect.value;
+            if (!name) {
+              authError.textContent = 'Por favor, informe seu nome completo.';
+              authError.style.display = 'block';
+              return;
+            }
             const userCred = await auth.createUserWithEmailAndPassword(email, password);
             await userCred.user.updateProfile({ displayName: name });
             await db.collection('users').doc(userCred.user.uid).set({
@@ -1213,7 +1224,7 @@
           }
           authModalOverlay.classList.remove('active');
         } catch (err) {
-          authError.textContent = err.message;
+          authError.textContent = AUTH_ERROR_MAP[err.code] || err.message;
           authError.style.display = 'block';
         }
       });
@@ -1227,10 +1238,10 @@
         try {
           JSON.parse(val);
           localStorage.setItem('firebase_config_keys', val);
-          alert("Configuração salva! A página será recarregada.");
+          alert("Configuração do Firebase salva com sucesso! A página será recarregada.");
           location.reload();
         } catch (e) {
-          alert("JSON inválido! Verifique a sintaxe.");
+          alert("JSON inválido! Verifique o formato digitado.");
         }
       });
 
