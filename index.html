@@ -824,32 +824,40 @@
         measurementId: "G-49MYV9HX74"
       };
 
+      // Configuração Padrão do Firebase do projeto agenda-inteligente-2a2c9
+      const DEFAULT_FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDwndbQXCQgLDCyO4TkmLATYMCwv-KqEvw",
+        authDomain: "agenda-inteligente-2a2c9.firebaseapp.com",
+        projectId: "agenda-inteligente-2a2c9",
+        storageBucket: "agenda-inteligente-2a2c9.firebasestorage.app",
+        messagingSenderId: "44633208128",
+        appId: "1:44633208128:web:bd44fe05f99861663b36a5",
+        measurementId: "G-49MYV9HX74"
+      };
+
       // ==========================================================================
       // INICIALIZACAO DO FIREBASE AUTH & FIRESTORE
       // ==========================================================================
       function initFirebase() {
         const storedConfig = localStorage.getItem('firebase_config_keys');
+        let configObj = DEFAULT_FIREBASE_CONFIG;
 
-        if (!storedConfig) {
-          firebaseOnline = false;
-          updateConnectionStatus(false, "Modo Local (Clique em '⚙️ Configurar Firebase' para conectar à nuvem)");
-          return;
+        if (storedConfig) {
+          try {
+            configObj = JSON.parse(storedConfig);
+          } catch (e) {
+            console.warn("Erro ao ler config do localStorage, usando padrão:", e);
+          }
         }
 
         try {
-          const configObj = JSON.parse(storedConfig);
-          if (!configObj.apiKey || configObj.apiKey.includes('AIzaSy...')) {
-            firebaseOnline = false;
-            updateConnectionStatus(false, "Chave Firebase pendente (Clique em '⚙️ Configurar Firebase')");
-            return;
-          }
-
           if (!firebase.apps.length) {
             firebase.initializeApp(configObj);
           }
           auth = firebase.auth();
           db = firebase.firestore();
           firebaseOnline = true;
+
 
           // Manter sessão persistente no navegador
           auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
