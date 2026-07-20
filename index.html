@@ -1330,9 +1330,17 @@
 
       let isStandaloneRegistering = false;
 
+      function getAuth() {
+        if (!auth) {
+          initFirebase();
+        }
+        return auth;
+      }
+
       if (btnLogout) {
         btnLogout.addEventListener('click', () => {
-          if (auth) auth.signOut();
+          const currentAuth = getAuth();
+          if (currentAuth) currentAuth.signOut();
         });
       }
 
@@ -1362,7 +1370,9 @@
             return;
           }
           try {
-            await auth.sendPasswordResetEmail(email);
+            const currentAuth = getAuth();
+            if (!currentAuth) throw new Error("Firebase não inicializado.");
+            await currentAuth.sendPasswordResetEmail(email);
             standaloneAuthSuccess.textContent = 'E-mail de redefinição enviado com sucesso!';
             standaloneAuthSuccess.style.display = 'block';
           } catch (err) {
@@ -1380,6 +1390,13 @@
           const email = standaloneEmailInput.value.trim();
           const password = standalonePasswordInput.value;
 
+          const currentAuth = getAuth();
+          if (!currentAuth) {
+            standaloneAuthError.textContent = 'Não foi possível inicializar o Firebase. Verifique a conexão.';
+            standaloneAuthError.style.display = 'block';
+            return;
+          }
+
           try {
             if (isStandaloneRegistering) {
               const name = standaloneNameInput.value.trim();
@@ -1389,7 +1406,7 @@
                 standaloneAuthError.style.display = 'block';
                 return;
               }
-              const userCred = await auth.createUserWithEmailAndPassword(email, password);
+              const userCred = await currentAuth.createUserWithEmailAndPassword(email, password);
               await userCred.user.updateProfile({ displayName: name });
               await db.collection('users').doc(userCred.user.uid).set({
                 uid: userCred.user.uid,
@@ -1406,7 +1423,7 @@
               if (userRole === 'gestor') gestorTabContainer.style.display = 'flex';
               else gestorTabContainer.style.display = 'none';
             } else {
-              await auth.signInWithEmailAndPassword(email, password);
+              await currentAuth.signInWithEmailAndPassword(email, password);
             }
           } catch (err) {
             standaloneAuthError.textContent = AUTH_ERROR_MAP[err.code] || err.message;
@@ -1414,6 +1431,7 @@
           }
         });
       }
+
 
       tabMyCalendar.addEventListener('click', () => {
         inspectModeUser = null;
