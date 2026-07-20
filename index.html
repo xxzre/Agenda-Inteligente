@@ -813,24 +813,40 @@
 
       let isRegistering = false;
 
+      // Configuração Padrão do Firebase (do projeto agenda-inteligente-2a2c9)
+      const DEFAULT_FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDwnchQICljlDCyD41kmLATYMDav-KqEwM",
+        authDomain: "agenda-inteligente-2a2c9.firebaseapp.com",
+        projectId: "agenda-inteligente-2a2c9",
+        storageBucket: "agenda-inteligente-2a2c9.firebasestorage.app",
+        messagingSenderId: "44633209129",
+        appId: "1:44633209129:web:bd44fe05f99861663b36a5",
+        measurementId: "G-49MYV9HX74"
+      };
+
       // ==========================================================================
       // INICIALIZACAO DO FIREBASE AUTH & FIRESTORE
       // ==========================================================================
       function initFirebase() {
         const storedConfig = localStorage.getItem('firebase_config_keys');
-        if (!storedConfig) {
-          updateConnectionStatus(false, "Modo Local (Firebase Desconectado)");
-          return;
+        let configObj = DEFAULT_FIREBASE_CONFIG;
+
+        if (storedConfig) {
+          try {
+            configObj = JSON.parse(storedConfig);
+          } catch (e) {
+            console.warn("Erro ao ler config do localStorage, usando padrão:", e);
+          }
         }
 
         try {
-          let configObj = JSON.parse(storedConfig);
           if (!firebase.apps.length) {
             firebase.initializeApp(configObj);
           }
           auth = firebase.auth();
           db = firebase.firestore();
           firebaseOnline = true;
+
 
           // Manter sessão persistente no navegador
           auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
