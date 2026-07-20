@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Inteligente - Controle de Presença</title>
+  
+  <!-- Tipografia Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & VARIAVEIS
+       ========================================================================== */
+    :root {
+      /* Cores Principais */
+      --bg-main: #F6F3EC;
+      --bg-card: #FFFFFF;
+      --border-card: #E5DFD3;
+      --border-focus: #B7742C;
+      --text-main: #21262B;
+      --text-muted: #626B73;
+      --text-light: #8E969D;
+
+      /* Cores de Status (Presencial, Home Office, Falta) */
+      --color-presencial: #B7742C;
+      --bg-presencial: #FDF7ED;
+      --border-presencial: #EAD5B7;
+      --text-presencial: #7E4B13;
+
+      --color-homeoffice: #3E7C6B;
+      --bg-homeoffice: #EDF6F3;
+      --border-homeoffice: #BCDCD3;
+      --text-homeoffice: #235246;
+
+      --color-falta: #A63D40;
+      --bg-falta: #FDF0F0;
+      --border-falta: #E8C4C5;
+      --text-falta: #732629;
+
+      /* Fontes */
+      --font-serif: 'Fraunces', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+
+      /* Sombras e Raios */
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 2px 4px rgba(33, 38, 43, 0.03);
+      --shadow-md: 0 4px 16px rgba(33, 38, 43, 0.06), 0 1px 3px rgba(33, 38, 43, 0.04);
+      --shadow-lg: 0 12px 32px rgba(33, 38, 43, 0.12), 0 2px 6px rgba(33, 38, 43, 0.04);
+
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ==========================================================================
+       CABECALHO ESTILO LEDGER
+       ========================================================================== */
+    .header-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .header-badge {
+      align-self: flex-start;
+      font-family: var(--font-mono);
+      font-size: 0.725rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-presencial);
+      background: var(--bg-presencial);
+      border: 1px solid var(--border-presencial);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+
+    .header-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .header-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-card);
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }
+
+    .btn:hover {
+      background-color: var(--bg-main);
+      border-color: #D3CBBD;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background-color: var(--text-main);
+      color: #FFFFFF;
+      border-color: var(--text-main);
+    }
+
+    .btn-primary:hover {
+      background-color: #384047;
+      border-color: #384047;
+      color: #FFFFFF;
+    }
+
+    .btn-icon {
+      padding: 8px 10px;
+    }
+
+    /* CONTROLES DE MES */
+    .month-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-card);
+    }
+
+    .month-display {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .month-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-transform: capitalize;
+    }
+
+    .year-title {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    .month-nav-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* ==========================================================================
+       RESUMO E KPIS
+       ========================================================================== */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+    }
+
+    .kpi-card.presencial::before { background-color: var(--color-presencial); }
+    .kpi-card.homeoffice::before { background-color: var(--color-homeoffice); }
+    .kpi-card.falta::before { background-color: var(--color-falta); }
+    .kpi-card.total::before { background-color: var(--text-main); }
+
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-label {
+      font-size: 0.825rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .kpi-icon {
+      font-size: 1.1rem;
+    }
+
+    .kpi-value-group {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .kpi-value {
+      font-family: var(--font-mono);
+      font-size: 1.8rem;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--text-main);
+    }
+
+    .kpi-percentage {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* BARRA DE PROGRESSO VISUAL */
+    .progress-bar-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-track {
+      height: 10px;
+      background-color: var(--bg-main);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      display: flex;
+      border: 1px solid var(--border-card);
+    }
+
+    .progress-fill {
+      height: 100%;
+      transition: width var(--transition-normal);
+    }
+
+    .progress-fill.presencial { background-color: var(--color-presencial); }
+    .progress-fill.homeoffice { background-color: var(--color-homeoffice); }
+    .progress-fill.falta { background-color: var(--color-falta); }
+
+    /* ==========================================================================
+       GRADE DO CALENDARIO
+       ========================================================================== */
+    .calendar-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .weekdays-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      text-align: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .weekday-item {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .weekday-item.weekend {
+      color: var(--text-light);
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .day-card {
+      background-color: #FAFAF7;
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      min-height: 90px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+      user-select: none;
+    }
+
+    .day-card:hover {
+      background-color: #FFFFFF;
+      border-color: #C0B7A6;
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+
+    .day-card.other-month {
+      background-color: transparent;
+      border-color: transparent;
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .day-card.other-month:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .day-card.today {
+      border: 2px solid var(--text-main);
+      background-color: #FFFFFF;
+    }
+
+    .day-card.today::after {
+      content: 'HOJE';
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 600;
+      color: var(--text-main);
+      background: var(--bg-main);
+      padding: 1px 4px;
+      border-radius: 3px;
+      border: 1px solid var(--border-card);
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .day-number {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .day-card.weekend .day-number {
+      color: var(--text-light);
+    }
+
+    .note-indicator {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    /* CARIMBOS / STAMPS DE STATUS */
+    .stamp-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 0.725rem;
+      font-weight: 600;
+      line-height: 1;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: auto;
+      border: 1px solid transparent;
+      animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .stamp-badge.presencial {
+      background-color: var(--bg-presencial);
+      border-color: var(--border-presencial);
+      color: var(--text-presencial);
+    }
+
+    .stamp-badge.homeoffice {
+      background-color: var(--bg-homeoffice);
+      border-color: var(--border-homeoffice);
+      color: var(--text-homeoffice);
+    }
+
+    .stamp-badge.falta {
+      background-color: var(--bg-falta);
+      border-color: var(--border-falta);
+      color: var(--text-falta);
+    }
+
+    .stamp-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .note-preview {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    /* ==========================================================================
+       MODAL / POPOVER DE SELECAO DE STATUS
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(33, 38, 43, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.95) translateY(10px);
+      transition: transform var(--transition-normal);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .modal-date-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      border-radius: 4px;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-main);
+      background-color: var(--bg-main);
+    }
+
+    /* OPCOES DE STATUS NO MODAL */
+    .status-options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .status-option-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-card);
+      background-color: var(--bg-card);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .status-option-btn:hover {
+      transform: translateX(3px);
+    }
+
+    .status-btn-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .status-shortcut {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-main);
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+    }
+
+    .status-option-btn.presencial {
+      border-color: var(--border-presencial);
+      color: var(--text-presencial);
+    }
+
+    .status-option-btn.presencial:hover, .status-option-btn.presencial.selected {
+      background-color: var(--bg-presencial);
+      border-color: var(--color-presencial);
+      box-shadow: 0 0 0 1px var(--color-presencial);
+    }
+
+    .status-option-btn.homeoffice {
+      border-color: var(--border-homeoffice);
+      color: var(--text-homeoffice);
+    }
+
+    .status-option-btn.homeoffice:hover, .status-option-btn.homeoffice.selected {
+      background-color: var(--bg-homeoffice);
+      border-color: var(--color-homeoffice);
+      box-shadow: 0 0 0 1px var(--color-homeoffice);
+    }
+
+    .status-option-btn.falta {
+      border-color: var(--border-falta);
+      color: var(--text-falta);
+    }
+
+    .status-option-btn.falta:hover, .status-option-btn.falta.selected {
+      background-color: var(--bg-falta);
+      border-color: var(--color-falta);
+      box-shadow: 0 0 0 1px var(--color-falta);
+    }
+
+    .status-option-btn.clear {
+      color: var(--text-muted);
+      border-style: dashed;
+    }
+
+    .status-option-btn.clear:hover {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+    }
+
+    /* CAMPO DE NOTA/OBSERVACAO */
+    .note-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .note-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .note-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      background-color: #FAFAF7;
+      color: var(--text-main);
+      resize: vertical;
+      min-height: 60px;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+
+    .note-textarea:focus {
+      border-color: var(--border-focus);
+      background-color: #FFFFFF;
+    }
+
+    /* FOOTER DO APP */
+    .app-footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 12px;
+      font-family: var(--font-mono);
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 640px) {
+      body {
+        padding: 12px 8px 32px;
+      }
+      .header-card {
+        padding: 16px;
+      }
+      .header-title {
+        font-size: 1.5rem;
+      }
+      .month-title {
+        font-size: 1.25rem;
+      }
+      .days-grid {
+        gap: 4px;
+      }
+      .day-card {
+        min-height: 70px;
+        padding: 4px;
+      }
+      .stamp-text {
+        display: none;
+      }
+      .stamp-badge {
+        justify-content: center;
+        padding: 4px 2px;
+      }
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- CABECALHO PRINCIPAL DA FICHA -->
+    <header class="header-card">
+      <div class="header-top">
+        <div class="header-title-group">
+          <span class="header-badge">Ledger de Trabalho</span>
+          <h1 class="header-title">Agenda Inteligente</h1>
+          <p class="header-subtitle">Registro simples e elegância no controle de presença mensal</p>
+        </div>
+
+        <div class="header-actions">
+          <button id="btnExportCsv" class="btn" title="Baixar relatório do mês em formato CSV">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar CSV
+          </button>
+          <button id="btnClearMonth" class="btn" title="Limpar todas as marcações deste mês">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Limpar Mês
+          </button>
+        </div>
+      </div>
+
+      <!-- NAV MES/ANO -->
+      <div class="month-nav-bar">
+        <div class="month-display">
+          <span id="monthTitle" class="month-title">--</span>
+          <span id="yearTitle" class="year-title">----</span>
+        </div>
+
+        <div class="month-nav-buttons">
+          <button id="btnPrevMonth" class="btn btn-icon" title="Mês Anterior">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button id="btnToday" class="btn" title="Ir para o mês atual">Hoje</button>
+          <button id="btnNextMonth" class="btn btn-icon" title="Próximo Mês">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CARDS DE RESUMO / KPIS -->
+    <section class="summary-grid">
+      <div class="kpi-card presencial">
+        <div class="kpi-header">
+          <span class="kpi-label">Presencial</span>
+          <span class="kpi-icon">🏢</span>
+        </div>
+        <div class="kpi-value-group">
+          <span id="countPresencial" class="kpi-value">0</span>
+          <span id="percPresencial" class="kpi-percentage">(0%)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card homeoffice">
+        <div class="kpi-header">
+          <span class="kpi-label">Home Office</span>
+          <span class="kpi-icon">🏠</span>
+        </div>
+        <div class="kpi-value-group">
+          <span id="countHomeoffice" class="kpi-value">0</span>
+          <span id="percHomeoffice" class="kpi-percentage">(0%)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card falta">
+        <div class="kpi-header">
+          <span class="kpi-label">Falta</span>
+          <span class="kpi-icon">❌</span>
+        </div>
+        <div class="kpi-value-group">
+          <span id="countFalta" class="kpi-value">0</span>
+          <span id="percFalta" class="kpi-percentage">(0%)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card total">
+        <div class="kpi-header">
+          <span class="kpi-label">Total de Registros</span>
+          <span class="kpi-icon">📊</span>
+        </div>
+        <div class="kpi-value-group">
+          <span id="countTotal" class="kpi-value">0</span>
+          <span id="labelDiasUteis" class="kpi-percentage">dias marcados</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- BARRA VISUAL DE DISTRIBUICAO DA PRESENCA -->
+    <section class="progress-bar-container">
+      <div class="progress-bar-label">
+        <span>Distribuição Mensal</span>
+        <span id="progressStatsText">0 registros no mês</span>
+      </div>
+      <div class="progress-track">
+        <div id="barPresencial" class="progress-fill presencial" style="width: 0%;"></div>
+        <div id="barHomeoffice" class="progress-fill homeoffice" style="width: 0%;"></div>
+        <div id="barFalta" class="progress-fill falta" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- CALENDARIO -->
+    <main class="calendar-container">
+      <!-- DIA DA SEMANA -->
+      <div class="weekdays-grid">
+        <div class="weekday-item weekend">Dom</div>
+        <div class="weekday-item">Seg</div>
+        <div class="weekday-item">Ter</div>
+        <div class="weekday-item">Qua</div>
+        <div class="weekday-item">Qui</div>
+        <div class="weekday-item">Sex</div>
+        <div class="weekday-item weekend">Sáb</div>
+      </div>
+
+      <!-- DIAS DO MES -->
+      <div id="daysGrid" class="days-grid">
+        <!-- Gerado via JS -->
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <span>Agenda Inteligente &bull; Dados salvos no localStorage (chave: <code id="storageKeyDisplay">attendance:AAAA-MM</code>)</span>
+    </footer>
+
+  </div>
+
+  <!-- MODAL / POPOVER SELECAO DE STATUS -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span id="modalDateTag" class="modal-date-tag">Dia 00/00/0000</span>
+          <h2 id="modalDateTitle" class="modal-title">Segunda-feira</h2>
+        </div>
+        <button id="btnModalClose" class="modal-close-btn" title="Fechar (Esc)">&times;</button>
+      </div>
+
+      <div class="status-options-grid">
+        <button class="status-option-btn presencial" data-status="presencial">
+          <div class="status-btn-left">
+            <span>🏢</span>
+            <span>Presencial</span>
+          </div>
+          <span class="status-shortcut">Tecla 1</span>
+        </button>
+
+        <button class="status-option-btn homeoffice" data-status="home_office">
+          <div class="status-btn-left">
+            <span>🏠</span>
+            <span>Home Office</span>
+          </div>
+          <span class="status-shortcut">Tecla 2</span>
+        </button>
+
+        <button class="status-option-btn falta" data-status="falta">
+          <div class="status-btn-left">
+            <span>❌</span>
+            <span>Falta</span>
+          </div>
+          <span class="status-shortcut">Tecla 3</span>
+        </button>
+
+        <button class="status-option-btn clear" data-status="clear">
+          <div class="status-btn-left">
+            <span>🧹</span>
+            <span>Limpar Marcação</span>
+          </div>
+          <span class="status-shortcut">Tecla 0</span>
+        </button>
+      </div>
+
+      <div class="note-input-group">
+        <label for="modalNoteInput" class="note-label">Observações / Notas (opcional):</label>
+        <textarea id="modalNoteInput" class="note-textarea" placeholder="Ex: Treinamento, Reunião de equipe, Atestado..."></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;">
+        <button id="btnSaveNote" class="btn btn-primary">Salvar e Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT -->
+  <script>
+    (function () {
+      'use strict';
+
+      // Nomes dos meses e dias da semana em pt-BR
+      const MONTH_NAMES = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+      ];
+
+      const WEEKDAY_NAMES_FULL = [
+        'Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira',
+        'Quinta-feira', 'Sexta-feira', 'Sábado'
+      ];
+
+      // Mapeamento de status
+      const STATUS_CONFIG = {
+        presencial: {
+          label: 'Presencial',
+          icon: '🏢',
+          class: 'presencial'
+        },
+        home_office: {
+          label: 'Home Office',
+          icon: '🏠',
+          class: 'homeoffice'
+        },
+        falta: {
+          label: 'Falta',
+          icon: '❌',
+          class: 'falta'
+        }
+      };
+
+      // Estado Global da Aplicação
+      let currentDate = new Date();
+      let monthData = {}; // Estrutura: { [dayNum]: { status: 'presencial', note: '' } }
+      let selectedDayNumber = null;
+
+      // Elementos do DOM
+      const monthTitleEl = document.getElementById('monthTitle');
+      const yearTitleEl = document.getElementById('yearTitle');
+      const daysGridEl = document.getElementById('daysGrid');
+      const storageKeyDisplayEl = document.getElementById('storageKeyDisplay');
+
+      const btnPrevMonth = document.getElementById('btnPrevMonth');
+      const btnNextMonth = document.getElementById('btnNextMonth');
+      const btnToday = document.getElementById('btnToday');
+      const btnExportCsv = document.getElementById('btnExportCsv');
+      const btnClearMonth = document.getElementById('btnClearMonth');
+
+      // KPIs
+      const countPresencialEl = document.getElementById('countPresencial');
+      const countHomeofficeEl = document.getElementById('countHomeoffice');
+      const countFaltaEl = document.getElementById('countFalta');
+      const countTotalEl = document.getElementById('countTotal');
+
+      const percPresencialEl = document.getElementById('percPresencial');
+      const percHomeofficeEl = document.getElementById('percHomeoffice');
+      const percFaltaEl = document.getElementById('percFalta');
+
+      const barPresencialEl = document.getElementById('barPresencial');
+      const barHomeofficeEl = document.getElementById('barHomeoffice');
+      const barFaltaEl = document.getElementById('barFalta');
+      const progressStatsTextEl = document.getElementById('progressStatsText');
+
+      // Modal
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modalDateTag = document.getElementById('modalDateTag');
+      const modalDateTitle = document.getElementById('modalDateTitle');
+      const modalNoteInput = document.getElementById('modalNoteInput');
+      const btnModalClose = document.getElementById('btnModalClose');
+      const btnSaveNote = document.getElementById('btnSaveNote');
+      const statusBtns = document.querySelectorAll('.status-option-btn');
+
+      // ==========================================================================
+      // UTILITARIOS DE STORAGE
+      // ==========================================================================
+      function getStorageKey(dateObj) {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        return `attendance:${year}-${month}`;
+      }
+
+      function loadMonthData() {
+        const key = getStorageKey(currentDate);
+        storageKeyDisplayEl.textContent = key;
+        try {
+          const raw = localStorage.getItem(key);
+          monthData = raw ? JSON.parse(raw) : {};
+        } catch (err) {
+          console.error("Erro ao ler dados do localStorage:", err);
+          monthData = {};
+        }
+      }
+
+      function saveMonthData() {
+        const key = getStorageKey(currentDate);
+        try {
+          localStorage.setItem(key, JSON.stringify(monthData));
+        } catch (err) {
+          console.error("Erro ao salvar dados no localStorage:", err);
+        }
+        updateKPIs();
+      }
+
+      // ==========================================================================
+      // RENDERIZACAO DE CALENDARIO E KPIS
+      // ==========================================================================
+      function renderCalendar() {
+        loadMonthData();
+
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        monthTitleEl.textContent = MONTH_NAMES[month];
+        yearTitleEl.textContent = year;
+
+        // Limpar dias antigos
+        daysGridEl.innerHTML = '';
+
+        // Primeiro dia do mês e total de dias
+        const firstDayOfWeek = new Date(year, month, 1).getDay();
+        const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+        const prevMonthTotalDays = new Date(year, month, 0).getDate();
+
+        // Hoje real (para destaque)
+        const realToday = new Date();
+        const isCurrentMonthYear = realToday.getFullYear() === year && realToday.getMonth() === month;
+        const realTodayDate = realToday.getDate();
+
+        // Dias do mês anterior (padding)
+        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+          const prevDayNum = prevMonthTotalDays - i;
+          const card = document.createElement('div');
+          card.className = 'day-card other-month';
+          card.innerHTML = `<span class="day-number">${prevDayNum}</span>`;
+          daysGridEl.appendChild(card);
+        }
+
+        // Dias do mês atual
+        for (let day = 1; day <= totalDaysInMonth; day++) {
+          const card = document.createElement('div');
+          card.className = 'day-card';
+
+          const dateObj = new Date(year, month, day);
+          const dayOfWeek = dateObj.getDay();
+
+          if (dayOfWeek === 0 || dayOfWeek === 6) {
+            card.classList.add('weekend');
+          }
+
+          if (isCurrentMonthYear && day === realTodayDate) {
+            card.classList.add('today');
+          }
+
+          // Conteúdo do cabeçalho do dia
+          const dayHeader = document.createElement('div');
+          dayHeader.className = 'day-header';
+
+          const dayNumberSpan = document.createElement('span');
+          dayNumberSpan.className = 'day-number';
+          dayNumberSpan.textContent = day;
+          dayHeader.appendChild(dayNumberSpan);
+
+          // Indicador de nota
+          const dayInfo = monthData[day];
+          if (dayInfo && dayInfo.note && dayInfo.note.trim() !== '') {
+            const noteIndicator = document.createElement('span');
+            noteIndicator.className = 'note-indicator';
+            noteIndicator.title = `Nota: ${dayInfo.note}`;
+            noteIndicator.textContent = '📝';
+            dayHeader.appendChild(noteIndicator);
+          }
+
+          card.appendChild(dayHeader);
+
+          // Carimbo de status (se houver)
+          if (dayInfo && dayInfo.status && STATUS_CONFIG[dayInfo.status]) {
+            const cfg = STATUS_CONFIG[dayInfo.status];
+            const stamp = document.createElement('div');
+            stamp.className = `stamp-badge ${cfg.class}`;
+            stamp.innerHTML = `<span>${cfg.icon}</span><span class="stamp-text">${cfg.label}</span>`;
+            card.appendChild(stamp);
+          }
+
+          // Clique para abrir modal
+          card.addEventListener('click', () => openModal(day));
+
+          daysGridEl.appendChild(card);
+        }
+
+        // Preenchimento final para completar a última semana (42 células ou múltiplo de 7)
+        const totalCellsSoFar = firstDayOfWeek + totalDaysInMonth;
+        const totalRows = Math.ceil(totalCellsSoFar / 7);
+        const totalTargetCells = totalRows * 7;
+        const nextMonthPadding = totalTargetCells - totalCellsSoFar;
+
+        for (let day = 1; day <= nextMonthPadding; day++) {
+          const card = document.createElement('div');
+          card.className = 'day-card other-month';
+          card.innerHTML = `<span class="day-number">${day}</span>`;
+          daysGridEl.appendChild(card);
+        }
+
+        updateKPIs();
+      }
+
+      function updateKPIs() {
+        let presencial = 0;
+        let homeoffice = 0;
+        let falta = 0;
+
+        Object.values(monthData).forEach(entry => {
+          if (!entry || !entry.status) return;
+          if (entry.status === 'presencial') presencial++;
+          else if (entry.status === 'home_office') homeoffice++;
+          else if (entry.status === 'falta') falta++;
+        });
+
+        const total = presencial + homeoffice + falta;
+
+        countPresencialEl.textContent = presencial;
+        countHomeofficeEl.textContent = homeoffice;
+        countFaltaEl.textContent = falta;
+        countTotalEl.textContent = total;
+
+        const percP = total > 0 ? Math.round((presencial / total) * 100) : 0;
+        const percH = total > 0 ? Math.round((homeoffice / total) * 100) : 0;
+        const percF = total > 0 ? Math.round((falta / total) * 100) : 0;
+
+        percPresencialEl.textContent = `(${percP}%)`;
+        percHomeofficeEl.textContent = `(${percH}%)`;
+        percFaltaEl.textContent = `(${percF}%)`;
+
+        // Atualizar barra de progresso visual
+        barPresencialEl.style.width = `${percP}%`;
+        barHomeofficeEl.style.width = `${percH}%`;
+        barFaltaEl.style.width = `${percF}%`;
+
+        progressStatsTextEl.textContent = `${total} registro${total === 1 ? '' : 's'} no mês`;
+      }
+
+      // ==========================================================================
+      // MODAL E INTERACOES
+      // ==========================================================================
+      function openModal(dayNumber) {
+        selectedDayNumber = dayNumber;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const dateObj = new Date(year, month, dayNumber);
+
+        const dayFormatted = String(dayNumber).padStart(2, '0');
+        const monthFormatted = String(month + 1).padStart(2, '0');
+        const weekdayName = WEEKDAY_NAMES_FULL[dateObj.getDay()];
+
+        modalDateTag.textContent = `Dia ${dayFormatted}/${monthFormatted}/${year}`;
+        modalDateTitle.textContent = weekdayName;
+
+        const currentDayInfo = monthData[dayNumber] || {};
+        const currentStatus = currentDayInfo.status || null;
+        modalNoteInput.value = currentDayInfo.note || '';
+
+        // Destaque nos botões de status do modal
+        statusBtns.forEach(btn => {
+          const btnStatus = btn.dataset.status;
+          if (btnStatus === currentStatus) {
+            btn.classList.add('selected');
+          } else {
+            btn.classList.remove('selected');
+          }
+        });
+
+        modalOverlay.classList.add('active');
+      }
+
+      function closeModal() {
+        modalOverlay.classList.remove('active');
+        selectedDayNumber = null;
+      }
+
+      function setDayStatus(status) {
+        if (!selectedDayNumber) return;
+
+        const existingNote = modalNoteInput.value;
+
+        if (status === 'clear') {
+          delete monthData[selectedDayNumber];
+        } else {
+          monthData[selectedDayNumber] = {
+            status: status,
+            note: existingNote
+          };
+        }
+
+        saveMonthData();
+        renderCalendar();
+        closeModal();
+      }
+
+      function saveDayNote() {
+        if (!selectedDayNumber) return;
+
+        const existingStatus = monthData[selectedDayNumber]?.status;
+        const noteText = modalNoteInput.value.trim();
+
+        if (existingStatus || noteText) {
+          monthData[selectedDayNumber] = {
+            status: existingStatus || null,
+            note: noteText
+          };
+        } else {
+          delete monthData[selectedDayNumber];
+        }
+
+        saveMonthData();
+        renderCalendar();
+        closeModal();
+      }
+
+      // ==========================================================================
+      // EXPORTACAO EM CSV
+      // ==========================================================================
+      function exportToCSV() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const totalDays = new Date(year, month + 1, 0).getDate();
+
+        let csvContent = "Data;Dia da Semana;Status;Observacao\n";
+
+        for (let day = 1; day <= totalDays; day++) {
+          const dateObj = new Date(year, month, day);
+          const dayFormatted = String(day).padStart(2, '0');
+          const monthFormatted = String(month + 1).padStart(2, '0');
+          const fullDate = `${dayFormatted}/${monthFormatted}/${year}`;
+          const weekday = WEEKDAY_NAMES_FULL[dateObj.getDay()];
+
+          const info = monthData[day];
+          let statusText = "Não informado";
+          let noteText = "";
+
+          if (info) {
+            if (info.status && STATUS_CONFIG[info.status]) {
+              statusText = STATUS_CONFIG[info.status].label;
+            }
+            if (info.note) {
+              noteText = info.note.replace(/;/g, ',').replace(/\n/g, ' ');
+            }
+          }
+
+          csvContent += `${fullDate};${weekday};${statusText};"${noteText}"\n`;
+        }
+
+        // Criar blob e download
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const fileName = `Presenca_${year}_${String(month + 1).padStart(2, '0')}.csv`;
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function clearWholeMonth() {
+        const confirmClear = confirm(`Tem certeza de que deseja limpar todas as marcações de ${MONTH_NAMES[currentDate.getMonth()]} de ${currentDate.getFullYear()}?`);
+        if (confirmClear) {
+          monthData = {};
+          saveMonthData();
+          renderCalendar();
+        }
+      }
+
+      // ==========================================================================
+      // EVENT LISTENERS E TECLAS DE ATALHO
+      // ==========================================================================
+      btnPrevMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+      });
+
+      btnNextMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+      });
+
+      btnToday.addEventListener('click', () => {
+        currentDate = new Date();
+        renderCalendar();
+      });
+
+      btnExportCsv.addEventListener('click', exportToCSV);
+      btnClearMonth.addEventListener('click', clearWholeMonth);
+
+      btnModalClose.addEventListener('click', closeModal);
+      btnSaveNote.addEventListener('click', saveDayNote);
+
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+      });
+
+      statusBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const status = btn.dataset.status;
+          setDayStatus(status);
+        });
+      });
+
+      // Atalhos de teclado no modal
+      document.addEventListener('keydown', (e) => {
+        if (!modalOverlay.classList.contains('active')) return;
+
+        // Se o usuário estiver digitando no campo de notas, ignora atalhos de números
+        if (document.activeElement === modalNoteInput && e.key !== 'Escape') {
+          return;
+        }
+
+        if (e.key === '1') setDayStatus('presencial');
+        else if (e.key === '2') setDayStatus('home_office');
+        else if (e.key === '3') setDayStatus('falta');
+        else if (e.key === '0') setDayStatus('clear');
+        else if (e.key === 'Escape') closeModal();
+      });
+
+      // Inicializar calendário
+      renderCalendar();
+
+    })();
+  </script>
+</body>
+</html>
