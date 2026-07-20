@@ -829,24 +829,27 @@
       // ==========================================================================
       function initFirebase() {
         const storedConfig = localStorage.getItem('firebase_config_keys');
-        let configObj = DEFAULT_FIREBASE_CONFIG;
 
-        if (storedConfig) {
-          try {
-            configObj = JSON.parse(storedConfig);
-          } catch (e) {
-            console.warn("Erro ao ler config do localStorage, usando padrão:", e);
-          }
+        if (!storedConfig) {
+          firebaseOnline = false;
+          updateConnectionStatus(false, "Modo Local (Clique em '⚙️ Configurar Firebase' para conectar à nuvem)");
+          return;
         }
 
         try {
+          const configObj = JSON.parse(storedConfig);
+          if (!configObj.apiKey || configObj.apiKey.includes('AIzaSy...')) {
+            firebaseOnline = false;
+            updateConnectionStatus(false, "Chave Firebase pendente (Clique em '⚙️ Configurar Firebase')");
+            return;
+          }
+
           if (!firebase.apps.length) {
             firebase.initializeApp(configObj);
           }
           auth = firebase.auth();
           db = firebase.firestore();
           firebaseOnline = true;
-
 
           // Manter sessão persistente no navegador
           auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -889,7 +892,8 @@
           });
         } catch (err) {
           console.error("Erro na inicializacao do Firebase:", err);
-          updateConnectionStatus(false, "Erro de Configuração no Firebase");
+          firebaseOnline = false;
+          updateConnectionStatus(false, "Erro na Configuração do Firebase");
         }
       }
 
@@ -1240,10 +1244,30 @@
           }
           authModalOverlay.classList.remove('active');
         } catch (err) {
-          authError.textContent = AUTH_ERROR_MAP[err.code] || err.message;
+          const errCode = err.code || '';
+          let msg = AUTH_ERROR_MAP[errCode] || err.message;
+          
+          if (errCode === 'auth/api-key-not-valid' || errCode === 'auth/invalid-api-key' || msg.includes('api-key')) {
+            msg = `A Chave API do Firebase é inválida. Clique no botão "⚙️ Configurar Firebase" abaixo para ajustar as chaves.`;
+            authError.innerHTML = `${msg} <br><br> <button type="button" id="btnFixFirebaseConfig" class="btn btn-primary" style="margin-top: 6px; font-size: 0.75rem;">⚙️ Abrir Configuração do Firebase</button>`;
+            authError.style.display = 'block';
+            setTimeout(() => {
+              const btnFix = document.getElementById('btnFixFirebaseConfig');
+              if (btnFix) {
+                btnFix.addEventListener('click', () => {
+                  authModalOverlay.classList.remove('active');
+                  configModalOverlay.classList.add('active');
+                });
+              }
+            }, 100);
+            return;
+          }
+
+          authError.textContent = msg;
           authError.style.display = 'block';
         }
       });
+
 
       // Firebase Config Modal Events
       btnConfigFirebase.addEventListener('click', () => configModalOverlay.classList.add('active'));
