@@ -422,9 +422,9 @@
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(10, 14, 23, 0.75); backdrop-filter: blur(8px);
       display: flex; align-items: center; justify-content: center;
-      z-index: 100; opacity: 0; visibility: hidden; transition: all var(--transition-fast); padding: 16px;
+      z-index: 100; opacity: 0; visibility: hidden; pointer-events: none; transition: all var(--transition-fast); padding: 16px;
     }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
     .modal-card {
       background: var(--bg-card); border: 1px solid var(--border-card-hover); border-radius: var(--radius-lg);
@@ -514,7 +514,10 @@
 
 
 </head>
+<body>
+
   <!-- CONTÊINER DA TELA DE LOGIN / CADASTRO GOL -->
+
   <div id="loginView" class="login-view-container">
     <div class="login-card">
       <div class="login-header">
