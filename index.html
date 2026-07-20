@@ -1088,22 +1088,23 @@
         const monthKey = getMonthKey();
         const activeUserId = inspectModeUser ? inspectModeUser.uid : (currentUser ? currentUser.uid : 'local');
 
+        // Carregar do localStorage imediatamente para ter os dados instantâneos
+        const raw = localStorage.getItem(`attendance:${activeUserId}_${monthKey}`);
+        if (raw) {
+          try { monthData = JSON.parse(raw); } catch (e) {}
+        }
+
         if (firebaseOnline && currentUser) {
           try {
             const docId = `${activeUserId}_${monthKey}`;
             const doc = await db.collection('attendance').doc(docId).get();
             if (doc.exists) {
               monthData = doc.data().days || {};
-            } else {
-              monthData = {};
+              localStorage.setItem(`attendance:${activeUserId}_${monthKey}`, JSON.stringify(monthData));
             }
           } catch (e) {
             console.error("Erro lendo Firestore:", e);
-            monthData = {};
           }
-        } else {
-          const raw = localStorage.getItem(`attendance:${monthKey}`);
-          monthData = raw ? JSON.parse(raw) : {};
         }
       }
 
@@ -1111,7 +1112,10 @@
         const monthKey = getMonthKey();
         const activeUserId = currentUser ? currentUser.uid : 'local';
 
-        if (firebaseOnline && currentUser) {
+        // Atualizar imediatamente o cache local no localStorage
+        localStorage.setItem(`attendance:${activeUserId}_${monthKey}`, JSON.stringify(monthData));
+
+        if (firebaseOnline && currentUser && db) {
           const docId = `${activeUserId}_${monthKey}`;
           try {
             await db.collection('attendance').doc(docId).set({
@@ -1125,8 +1129,6 @@
           } catch (e) {
             console.error("Erro salvando no Firestore:", e);
           }
-        } else {
-          localStorage.setItem(`attendance:${monthKey}`, JSON.stringify(monthData));
         }
         updateKPIs();
       }
@@ -1134,10 +1136,13 @@
       // ==========================================================================
       // RENDERIZACAO DE CALENDARIO E PORCENTAGENS
       // ==========================================================================
-      async function renderCalendar() {
-        await loadMonthData();
+      async function renderCalendar(skipLoad = false) {
+        if (!skipLoad) {
+          await loadMonthData();
+        }
 
         const year = currentDate.getFullYear();
+
         const month = currentDate.getMonth();
 
         monthTitleEl.textContent = MONTH_NAMES[month];
@@ -1611,30 +1616,51 @@
       }
 
       btnModalClose.addEventListener('click', () => modalOverlay.classList.remove('active'));
-      
-      function setDayStatus(status) {
+
+      // Fechar ao clicar no fundo escuro fora do card
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+      });
+
+      async function setDayStatus(status) {
         if (!selectedDayNumber) return;
-        if (status === 'clear') delete monthData[selectedDayNumber];
-        else {
+        if (status === 'clear') {
+          delete monthData[selectedDayNumber];
+        } else {
           monthData[selectedDayNumber] = { status: status, note: modalNoteInput.value };
         }
-        saveMonthData();
-        renderCalendar();
         modalOverlay.classList.remove('active');
+        renderCalendar(true); // renderiza na tela instantaneamente sem aguardar a rede
+        await saveMonthData(); // salva no Firestore e localStorage de forma transparente
       }
 
       document.querySelectorAll('#statusBtnContainer .status-option-btn').forEach(btn => {
         btn.addEventListener('click', () => setDayStatus(btn.dataset.status));
       });
 
-      btnSaveNote.addEventListener('click', () => {
+      btnSaveNote.addEventListener('click', async () => {
         if (selectedDayNumber && monthData[selectedDayNumber]) {
           monthData[selectedDayNumber].note = modalNoteInput.value;
-          saveMonthData();
-          renderCalendar();
+          modalOverlay.classList.remove('active');
+          renderCalendar(true);
+          await saveMonthData();
+        } else {
+          modalOverlay.classList.remove('active');
         }
-        modalOverlay.classList.remove('active');
       });
+
+      // Atalhos de teclado (1: Presencial, 2: Home Office, 3: Falta, 0: Limpar, Esc: Fechar)
+      window.addEventListener('keydown', (e) => {
+        if (!modalOverlay.classList.contains('active')) return;
+        if (document.activeElement === modalNoteInput) return; // Se estiver digitando na nota, ignora teclas numéricas
+
+        if (e.key === '1') setDayStatus('presencial');
+        else if (e.key === '2') setDayStatus('home_office');
+        else if (e.key === '3') setDayStatus('falta');
+        else if (e.key === '0') setDayStatus('clear');
+        else if (e.key === 'Escape') modalOverlay.classList.remove('active');
+      });
+
 
       // Mês Nav
       document.getElementById('btnPrevMonth').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
