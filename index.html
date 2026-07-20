@@ -1198,13 +1198,17 @@
           }
 
           if (!inspectModeUser) {
-            card.addEventListener('click', () => openModal(day));
+            card.onclick = (e) => {
+              e.stopPropagation();
+              openModal(day);
+            };
           } else {
             card.style.cursor = 'default';
           }
 
           daysGridEl.appendChild(card);
         }
+
 
         updateKPIs();
       }
@@ -1626,36 +1630,50 @@
       }
 
       function openModal(day) {
-        selectedDayNumber = day;
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        const dateObj = new Date(year, month, day);
+        try {
+          selectedDayNumber = day;
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth();
+          const dateObj = new Date(year, month, day);
 
-        modalDateTag.textContent = `Dia ${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
-        modalDateTitle.textContent = WEEKDAY_NAMES_FULL[dateObj.getDay()];
-        
-        const existing = monthData[day] || {};
-        currentSelectedStatus = existing.status || null;
-        modalNoteInput.value = existing.note || '';
+          if (modalDateTag) modalDateTag.textContent = `Dia ${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
+          if (modalDateTitle) modalDateTitle.textContent = WEEKDAY_NAMES_FULL[dateObj.getDay()];
+          
+          const existing = monthData[day] || {};
+          currentSelectedStatus = existing.status || null;
+          if (modalNoteInput) modalNoteInput.value = existing.note || '';
 
-        highlightSelectedStatusBtn(currentSelectedStatus);
-        modalOverlay.style.display = 'flex';
-        modalOverlay.classList.add('active');
+          highlightSelectedStatusBtn(currentSelectedStatus);
+          if (modalOverlay) {
+            modalOverlay.style.display = 'flex';
+            modalOverlay.style.opacity = '1';
+            modalOverlay.style.visibility = 'visible';
+            modalOverlay.style.pointerEvents = 'auto';
+            modalOverlay.classList.add('active');
+          }
+        } catch (e) {
+          console.error("Erro ao abrir modal:", e);
+        }
       }
 
       function closeModal() {
-        modalOverlay.classList.remove('active');
-        modalOverlay.style.display = 'none';
+        if (modalOverlay) {
+          modalOverlay.classList.remove('active');
+          modalOverlay.style.display = 'none';
+          modalOverlay.style.opacity = '0';
+          modalOverlay.style.visibility = 'hidden';
+          modalOverlay.style.pointerEvents = 'none';
+        }
       }
 
+      if (btnModalClose) btnModalClose.onclick = closeModal;
+      if (btnCancelModal) btnCancelModal.onclick = closeModal;
 
-      if (btnModalClose) btnModalClose.addEventListener('click', closeModal);
-      if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
-
-      // Fechar ao clicar no fundo escuro fora do card
-      modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) closeModal();
-      });
+      if (modalOverlay) {
+        modalOverlay.onclick = (e) => {
+          if (e.target === modalOverlay) closeModal();
+        };
+      }
 
       async function setDayStatus(status) {
         if (!selectedDayNumber) return;
@@ -1667,7 +1685,7 @@
         } else {
           monthData[selectedDayNumber] = {
             status: status,
-            note: modalNoteInput.value.trim()
+            note: modalNoteInput ? modalNoteInput.value.trim() : ''
           };
         }
         closeModal();
@@ -1676,8 +1694,12 @@
       }
 
       document.querySelectorAll('#statusBtnContainer .status-option-btn').forEach(btn => {
-        btn.addEventListener('click', () => setDayStatus(btn.dataset.status));
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          setDayStatus(btn.dataset.status);
+        };
       });
+
 
       if (btnSaveNote) {
         btnSaveNote.addEventListener('click', async () => {
