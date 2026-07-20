@@ -55,6 +55,11 @@
       --border-falta: rgba(239, 68, 68, 0.4);
       --text-falta: #F87171;
 
+      --color-folga: #3B82F6;
+      --bg-folga: rgba(59, 130, 246, 0.15);
+      --border-folga: rgba(59, 130, 246, 0.4);
+      --text-folga: #60A5FA;
+
       /* Fontes */
       --font-serif: 'Fraunces', serif;
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -306,6 +311,7 @@
     .kpi-card.presencial::before { background-color: var(--color-presencial); }
     .kpi-card.homeoffice::before { background-color: var(--color-homeoffice); }
     .kpi-card.falta::before { background-color: var(--color-falta); }
+    .kpi-card.folga::before { background-color: var(--color-folga); }
     .kpi-card.total::before { background-color: var(--gol-orange); }
 
     .kpi-header { display: flex; align-items: center; justify-content: space-between; }
@@ -332,6 +338,7 @@
     .progress-fill.presencial { background-color: var(--color-presencial); }
     .progress-fill.homeoffice { background-color: var(--color-homeoffice); }
     .progress-fill.falta { background-color: var(--color-falta); }
+    .progress-fill.folga { background-color: var(--color-folga); }
 
     /* GRADE DO CALENDARIO */
     .calendar-container {
@@ -397,6 +404,7 @@
     .stamp-badge.presencial { background-color: var(--bg-presencial); border-color: var(--border-presencial); color: var(--text-presencial); }
     .stamp-badge.homeoffice { background-color: var(--bg-homeoffice); border-color: var(--border-homeoffice); color: var(--text-homeoffice); }
     .stamp-badge.falta { background-color: var(--bg-falta); border-color: var(--border-falta); color: var(--text-falta); }
+    .stamp-badge.folga { background-color: var(--bg-folga); border-color: var(--border-folga); color: var(--text-folga); }
     .stamp-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* PAINEL DO GESTOR */
@@ -462,6 +470,7 @@
     .status-option-btn.presencial { border-color: var(--border-presencial); color: var(--text-presencial); }
     .status-option-btn.homeoffice { border-color: var(--border-homeoffice); color: var(--text-homeoffice); }
     .status-option-btn.falta { border-color: var(--border-falta); color: var(--text-falta); }
+    .status-option-btn.folga { border-color: var(--border-folga); color: var(--text-folga); }
 
     /* TELA DEDICADA DE LOGIN GOL */
     .login-view-container {
@@ -668,6 +677,17 @@
           </div>
         </div>
 
+        <div class="kpi-card folga">
+          <div class="kpi-header">
+            <span class="kpi-label">Folga</span>
+            <span>🌴</span>
+          </div>
+          <div class="kpi-value-group">
+            <span id="countFolga" class="kpi-value">0</span>
+            <span id="percFolga" class="kpi-percentage">0%</span>
+          </div>
+        </div>
+
         <div class="kpi-card total">
           <div class="kpi-header">
             <span class="kpi-label">Taxa de Presença Total</span>
@@ -690,6 +710,8 @@
           <div id="barPresencial" class="progress-fill presencial" style="width: 0%;"></div>
           <div id="barHomeoffice" class="progress-fill homeoffice" style="width: 0%;"></div>
           <div id="barFalta" class="progress-fill falta" style="width: 0%;"></div>
+          <div id="barFolga" class="progress-fill folga" style="width: 0%;"></div>
+        </div>
         </div>
       </section>
 
@@ -744,13 +766,14 @@
               <th>🏢 Presencial %</th>
               <th>🏠 Home Office %</th>
               <th>❌ Falta %</th>
+              <th>🌴 Folga %</th>
               <th>Registros</th>
               <th>Ação</th>
             </tr>
           </thead>
           <tbody id="teamTableBody">
             <tr>
-              <td colspan="7" style="text-align: center; color: var(--text-muted);">Carregando dados da equipe...</td>
+              <td colspan="8" style="text-align: center; color: var(--text-muted);">Carregando dados da equipe...</td>
             </tr>
           </tbody>
         </table>
@@ -786,6 +809,10 @@
         <button type="button" class="status-option-btn falta" data-status="falta">
           <span>❌ Falta</span>
           <span style="font-family: var(--font-mono); font-size: 0.7rem;">Tecla 3</span>
+        </button>
+        <button type="button" class="status-option-btn folga" data-status="folga">
+          <span>🌴 Folga</span>
+          <span style="font-family: var(--font-mono); font-size: 0.7rem;">Tecla 4</span>
         </button>
         <button type="button" class="status-option-btn" data-status="clear" style="border-style: dashed; color: var(--text-muted);">
           <span>🧹 Limpar Marcação</span>
@@ -894,7 +921,8 @@
       const STATUS_CONFIG = {
         presencial: { label: 'Presencial', icon: '🏢', class: 'presencial' },
         home_office: { label: 'Home Office', icon: '🏠', class: 'homeoffice' },
-        falta: { label: 'Falta', icon: '❌', class: 'falta' }
+        falta: { label: 'Falta', icon: '❌', class: 'falta' },
+        folga: { label: 'Folga', icon: '🌴', class: 'folga' }
       };
 
       // Dicionário de Tradução de Erros do Firebase Auth
@@ -933,15 +961,18 @@
       const countPresencialEl = document.getElementById('countPresencial');
       const countHomeofficeEl = document.getElementById('countHomeoffice');
       const countFaltaEl = document.getElementById('countFalta');
+      const countFolgaEl = document.getElementById('countFolga');
       const countTotalEl = document.getElementById('countTotal');
       const percPresencialEl = document.getElementById('percPresencial');
       const percHomeofficeEl = document.getElementById('percHomeoffice');
       const percFaltaEl = document.getElementById('percFalta');
+      const percFolgaEl = document.getElementById('percFolga');
       const percPresencaEfetivaEl = document.getElementById('percPresencaEfetiva');
 
       const barPresencialEl = document.getElementById('barPresencial');
       const barHomeofficeEl = document.getElementById('barHomeoffice');
       const barFaltaEl = document.getElementById('barFalta');
+      const barFolgaEl = document.getElementById('barFolga');
       const progressStatsTextEl = document.getElementById('progressStatsText');
 
       // Gestor Elements
@@ -1222,35 +1253,40 @@
       }
 
       function updateKPIs() {
-        let presencial = 0, homeoffice = 0, falta = 0;
+        let presencial = 0, homeoffice = 0, falta = 0, folga = 0;
 
         Object.values(monthData).forEach(entry => {
           if (!entry || !entry.status) return;
           if (entry.status === 'presencial') presencial++;
           else if (entry.status === 'home_office') homeoffice++;
           else if (entry.status === 'falta') falta++;
+          else if (entry.status === 'folga') folga++;
         });
 
-        const total = presencial + homeoffice + falta;
+        const total = presencial + homeoffice + falta + folga;
         const percP = total > 0 ? Math.round((presencial / total) * 100) : 0;
         const percH = total > 0 ? Math.round((homeoffice / total) * 100) : 0;
         const percF = total > 0 ? Math.round((falta / total) * 100) : 0;
+        const percFol = total > 0 ? Math.round((folga / total) * 100) : 0;
         const percEfetiva = total > 0 ? Math.round(((presencial + homeoffice) / total) * 100) : 0;
 
-        countPresencialEl.textContent = presencial;
-        countHomeofficeEl.textContent = homeoffice;
-        countFaltaEl.textContent = falta;
-        countTotalEl.textContent = `(${total} dias)`;
+        if (countPresencialEl) countPresencialEl.textContent = presencial;
+        if (countHomeofficeEl) countHomeofficeEl.textContent = homeoffice;
+        if (countFaltaEl) countFaltaEl.textContent = falta;
+        if (countFolgaEl) countFolgaEl.textContent = folga;
+        if (countTotalEl) countTotalEl.textContent = `(${total} dias)`;
 
-        percPresencialEl.textContent = `${percP}%`;
-        percHomeofficeEl.textContent = `${percH}%`;
-        percFaltaEl.textContent = `${percF}%`;
-        percPresencaEfetivaEl.textContent = `${percEfetiva}%`;
+        if (percPresencialEl) percPresencialEl.textContent = `${percP}%`;
+        if (percHomeofficeEl) percHomeofficeEl.textContent = `${percH}%`;
+        if (percFaltaEl) percFaltaEl.textContent = `${percF}%`;
+        if (percFolgaEl) percFolgaEl.textContent = `${percFol}%`;
+        if (percPresencaEfetivaEl) percPresencaEfetivaEl.textContent = `${percEfetiva}%`;
 
-        barPresencialEl.style.width = `${percP}%`;
-        barHomeofficeEl.style.width = `${percH}%`;
-        barFaltaEl.style.width = `${percF}%`;
-        progressStatsTextEl.textContent = `${total} registros no mês`;
+        if (barPresencialEl) barPresencialEl.style.width = `${percP}%`;
+        if (barHomeofficeEl) barHomeofficeEl.style.width = `${percH}%`;
+        if (barFaltaEl) barFaltaEl.style.width = `${percF}%`;
+        if (barFolgaEl) barFolgaEl.style.width = `${percFol}%`;
+        if (progressStatsTextEl) progressStatsTextEl.textContent = `${total} registros no mês`;
       }
 
       // ==========================================================================
@@ -1259,7 +1295,7 @@
       async function renderTeamDashboard() {
         if (!db || userRole !== 'gestor') return;
 
-        teamTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Carregando equipe...</td></tr>`;
+        teamTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">Carregando equipe...</td></tr>`;
 
         try {
           const usersSnapshot = await db.collection('users').get();
@@ -1271,13 +1307,14 @@
             const attendanceDoc = await db.collection('attendance').doc(`${userDoc.id}_${monthKey}`).get();
             const days = attendanceDoc.exists ? (attendanceDoc.data().days || {}) : {};
 
-            let p = 0, h = 0, f = 0;
+            let p = 0, h = 0, f = 0, fol = 0;
             Object.values(days).forEach(e => {
               if (e.status === 'presencial') p++;
               else if (e.status === 'home_office') h++;
               else if (e.status === 'falta') f++;
+              else if (e.status === 'folga') fol++;
             });
-            const tot = p + h + f;
+            const tot = p + h + f + fol;
 
             members.push({
               uid: userDoc.id,
@@ -1287,6 +1324,7 @@
               pPerc: tot > 0 ? Math.round((p / tot) * 100) : 0,
               hPerc: tot > 0 ? Math.round((h / tot) * 100) : 0,
               fPerc: tot > 0 ? Math.round((f / tot) * 100) : 0,
+              folPerc: tot > 0 ? Math.round((fol / tot) * 100) : 0,
               efetiva: tot > 0 ? Math.round(((p + h) / tot) * 100) : 0,
               totDays: tot
             });
@@ -1313,6 +1351,7 @@
               <td><strong style="color: var(--text-presencial);">${m.pPerc}%</strong></td>
               <td><strong style="color: var(--text-homeoffice);">${m.hPerc}%</strong></td>
               <td><strong style="color: var(--text-falta);">${m.fPerc}%</strong></td>
+              <td><strong style="color: var(--text-folga);">${m.folPerc}%</strong></td>
               <td><span style="font-family: var(--font-mono);">${m.totDays} dias</span></td>
               <td><button class="btn btn-inspect" data-uid="${m.uid}" data-name="${m.name}">👁️ Ver Agenda</button></td>
             `;
@@ -1759,7 +1798,7 @@
         });
       }
 
-      // Atalhos de teclado (1: Presencial, 2: Home Office, 3: Falta, 0: Limpar, Esc: Fechar)
+      // Atalhos de teclado (1: Presencial, 2: Home Office, 3: Falta, 4: Folga, 0: Limpar, Esc: Fechar)
       window.addEventListener('keydown', (e) => {
         if (!modalOverlay || !modalOverlay.classList.contains('active')) return;
         if (document.activeElement === modalNoteInput) return;
@@ -1767,6 +1806,7 @@
         if (e.key === '1') setDayStatus('presencial');
         else if (e.key === '2') setDayStatus('home_office');
         else if (e.key === '3') setDayStatus('falta');
+        else if (e.key === '4') setDayStatus('folga');
         else if (e.key === '0') setDayStatus('clear');
         else if (e.key === 'Escape') closeModal();
       });
