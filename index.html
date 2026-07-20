@@ -455,25 +455,128 @@
     .status-option-btn.homeoffice { border-color: var(--border-homeoffice); color: var(--text-homeoffice); }
     .status-option-btn.falta { border-color: var(--border-falta); color: var(--text-falta); }
 
+    /* TELA DEDICADA DE LOGIN GOL */
+    .login-view-container {
+      width: 100%;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card-hover);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 460px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #FF6A00 0%, #FF9E00 100%);
+    }
+
+    .login-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .login-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
     .app-footer { text-align: center; font-size: 0.8rem; color: var(--text-light); margin-top: 12px; font-family: var(--font-mono); }
   </style>
 
+
 </head>
-<body>
+  <!-- CONTÊINER DA TELA DE LOGIN / CADASTRO GOL -->
+  <div id="loginView" class="login-view-container">
+    <div class="login-card">
+      <div class="login-header">
+        <span class="header-badge" style="align-self: center;">✈️ VOE GOL &bull; PORTAL CORPORATIVO</span>
+        <h1 class="login-title">Controle de Presença</h1>
+        <p class="login-subtitle">Acesse sua conta para registrar presença, home office e monitorar a frequência da equipe</p>
+      </div>
 
-  <div class="app-container">
+      <form id="standaloneAuthForm" style="display: flex; flex-direction: column; gap: 16px;">
+        <div id="standaloneNameGroup" class="form-group" style="display: none;">
+          <label class="form-label" for="standaloneName">Nome Completo</label>
+          <input type="text" id="standaloneName" class="form-input" placeholder="Ex: Maria Silva">
+        </div>
 
-    <!-- BARRA DE CONEXAO E SESSAO DE USUARIO -->
+        <div class="form-group">
+          <label class="form-label" for="standaloneEmail">E-mail Corporativo</label>
+          <input type="email" id="standaloneEmail" class="form-input" placeholder="seu.email@voegol.com.br" required>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="standalonePassword">Senha</label>
+            <a href="#" id="standaloneForgotPassword" style="font-size: 0.75rem; color: var(--gol-orange); text-decoration: none;">Esqueceu a senha?</a>
+          </div>
+          <input type="password" id="standalonePassword" class="form-input" placeholder="Sua senha de acesso" required>
+        </div>
+
+        <div id="standaloneRoleGroup" class="form-group" style="display: none;">
+          <label class="form-label" for="standaloneRole">Perfil de Acesso</label>
+          <select id="standaloneRole" class="form-select">
+            <option value="colaborador">👤 Colaborador (Registrar presença individual)</option>
+            <option value="gestor">👔 Gestor (Registrar e Monitorar Equipe)</option>
+          </select>
+        </div>
+
+        <div id="standaloneAuthSuccess" style="color: var(--text-homeoffice); font-size: 0.85rem; text-align: center; display: none;"></div>
+        <div id="standaloneAuthError" style="color: var(--text-falta); font-size: 0.85rem; text-align: center; display: none;"></div>
+
+        <button type="submit" id="btnStandaloneSubmit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 0.95rem;">Entrar no Portal</button>
+      </form>
+
+      <div style="text-align: center; font-size: 0.875rem; margin-top: 6px;">
+        <span id="standaloneToggleText">Não possui uma conta?</span>
+        <a href="#" id="standaloneToggleLink" style="color: var(--gol-orange); font-weight: 700; text-decoration: none; margin-left: 4px;">Cadastrar-se</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTÊINER DA AGENDA PRINCIPAL (APÓS LOGIN) -->
+  <div id="appView" class="app-container" style="display: none;">
+
+    <!-- BARRA DE STATUS DO FIREBASE E SESSÃO -->
     <div class="top-status-bar">
       <div class="connection-status">
         <span id="statusDot" class="status-dot local"></span>
-        <span id="statusText">Modo Local (Firebase Desconectado)</span>
+        <span id="statusText">Conectado ao Firebase Cloud</span>
       </div>
 
       <div class="user-session-group">
-        <span id="userInfo" style="display: none; font-weight: 600;"></span>
-        <span id="userRoleBadge" class="role-badge colaborador" style="display: none;">Colaborador</span>
-        <button id="btnAuthAction" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem;">Entrar / Cadastrar</button>
+        <span id="userInfo" style="font-weight: 600;"></span>
+        <span id="userRoleBadge" class="role-badge colaborador">Colaborador</span>
+        <button id="btnLogout" class="btn btn-danger" style="padding: 6px 14px; font-size: 0.8rem;">🚪 Sair</button>
       </div>
     </div>
 
@@ -486,7 +589,6 @@
           <p class="header-subtitle">Monitore a presença presencial, remota e de equipe com facilidade e elegância</p>
         </div>
 
-
         <div class="header-actions">
           <button id="btnExportCsv" class="btn" title="Baixar relatório do mês em CSV">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -495,6 +597,7 @@
           <button id="btnClearMonth" class="btn" title="Limpar marcações do mês">Limpar Mês</button>
         </div>
       </div>
+
 
       <!-- ALTERNADOR DE VISÃO PARA GESTORES -->
       <div id="gestorTabContainer" class="view-switcher-bar" style="display: none;">
@@ -912,11 +1015,17 @@
           updateConnectionStatus(true, "Conectado ao Firebase Cloud");
 
           auth.onAuthStateChanged(async (user) => {
+            const loginViewEl = document.getElementById('loginView');
+            const appViewEl = document.getElementById('appView');
+
             if (user) {
               currentUser = user;
               userInfoEl.textContent = user.displayName || user.email;
               userInfoEl.style.display = 'inline';
-              btnAuthAction.textContent = 'Sair';
+
+              // Alternar visões: Mostrar Agenda e Ocultar Tela de Login
+              if (loginViewEl) loginViewEl.style.display = 'none';
+              if (appViewEl) appViewEl.style.display = 'flex';
 
               // Buscar perfil e função no Firestore com retry para evitar race conditions no cadastro
               try {
@@ -946,10 +1055,14 @@
               userInfoEl.style.display = 'none';
               userRoleBadgeEl.style.display = 'none';
               gestorTabContainer.style.display = 'none';
-              btnAuthAction.textContent = 'Entrar / Cadastrar';
+
+              // Alternar visões: Ocultar Agenda e Mostrar Tela de Login
+              if (loginViewEl) loginViewEl.style.display = 'flex';
+              if (appViewEl) appViewEl.style.display = 'none';
             }
             renderCalendar();
           });
+
         } catch (err) {
           console.error("Erro na inicializacao do Firebase:", err);
           firebaseOnline = false;
@@ -1200,9 +1313,108 @@
         }
       }
 
-      // ==========================================================================
-      // EVENTOS DE NAVEGACAO E AUTENTICACAO POR EMAIL E SENHA
-      // ==========================================================================
+      // Elementos do Formulário de Login Dedicado (Página Inicial GOL)
+      const standaloneAuthForm = document.getElementById('standaloneAuthForm');
+      const standaloneNameGroup = document.getElementById('standaloneNameGroup');
+      const standaloneRoleGroup = document.getElementById('standaloneRoleGroup');
+      const standaloneNameInput = document.getElementById('standaloneName');
+      const standaloneEmailInput = document.getElementById('standaloneEmail');
+      const standalonePasswordInput = document.getElementById('standalonePassword');
+      const standaloneRoleSelect = document.getElementById('standaloneRole');
+      const standaloneAuthError = document.getElementById('standaloneAuthError');
+      const standaloneAuthSuccess = document.getElementById('standaloneAuthSuccess');
+      const standaloneToggleText = document.getElementById('standaloneToggleText');
+      const standaloneToggleLink = document.getElementById('standaloneToggleLink');
+      const standaloneForgotPassword = document.getElementById('standaloneForgotPassword');
+      const btnLogout = document.getElementById('btnLogout');
+
+      let isStandaloneRegistering = false;
+
+      if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+          if (auth) auth.signOut();
+        });
+      }
+
+      if (standaloneToggleLink) {
+        standaloneToggleLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          isStandaloneRegistering = !isStandaloneRegistering;
+          standaloneAuthError.style.display = 'none';
+          standaloneAuthSuccess.style.display = 'none';
+          standaloneNameGroup.style.display = isStandaloneRegistering ? 'flex' : 'none';
+          standaloneRoleGroup.style.display = isStandaloneRegistering ? 'flex' : 'none';
+          document.getElementById('btnStandaloneSubmit').textContent = isStandaloneRegistering ? 'Cadastrar e Acessar' : 'Entrar no Portal';
+          standaloneToggleText.textContent = isStandaloneRegistering ? 'Já possui uma conta?' : 'Não possui uma conta?';
+          standaloneToggleLink.textContent = isStandaloneRegistering ? 'Fazer Login' : 'Cadastrar-se';
+        });
+      }
+
+      if (standaloneForgotPassword) {
+        standaloneForgotPassword.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const email = standaloneEmailInput.value.trim();
+          standaloneAuthError.style.display = 'none';
+          standaloneAuthSuccess.style.display = 'none';
+          if (!email) {
+            standaloneAuthError.textContent = 'Digite seu e-mail no campo acima para receber as instruções.';
+            standaloneAuthError.style.display = 'block';
+            return;
+          }
+          try {
+            await auth.sendPasswordResetEmail(email);
+            standaloneAuthSuccess.textContent = 'E-mail de redefinição enviado com sucesso!';
+            standaloneAuthSuccess.style.display = 'block';
+          } catch (err) {
+            standaloneAuthError.textContent = AUTH_ERROR_MAP[err.code] || err.message;
+            standaloneAuthError.style.display = 'block';
+          }
+        });
+      }
+
+      if (standaloneAuthForm) {
+        standaloneAuthForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          standaloneAuthError.style.display = 'none';
+          standaloneAuthSuccess.style.display = 'none';
+          const email = standaloneEmailInput.value.trim();
+          const password = standalonePasswordInput.value;
+
+          try {
+            if (isStandaloneRegistering) {
+              const name = standaloneNameInput.value.trim();
+              const role = standaloneRoleSelect.value;
+              if (!name) {
+                standaloneAuthError.textContent = 'Por favor, informe seu nome completo.';
+                standaloneAuthError.style.display = 'block';
+                return;
+              }
+              const userCred = await auth.createUserWithEmailAndPassword(email, password);
+              await userCred.user.updateProfile({ displayName: name });
+              await db.collection('users').doc(userCred.user.uid).set({
+                uid: userCred.user.uid,
+                name: name,
+                email: email,
+                role: role,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+
+              userRole = role;
+              userRoleBadgeEl.textContent = userRole === 'gestor' ? 'Gestor' : 'Colaborador';
+              userRoleBadgeEl.className = `role-badge ${userRole}`;
+              userRoleBadgeEl.style.display = 'inline';
+              if (userRole === 'gestor') gestorTabContainer.style.display = 'flex';
+              else gestorTabContainer.style.display = 'none';
+            } else {
+              await auth.signInWithEmailAndPassword(email, password);
+            }
+          } catch (err) {
+            standaloneAuthError.textContent = AUTH_ERROR_MAP[err.code] || err.message;
+            standaloneAuthError.style.display = 'block';
+          }
+        });
+      }
+
       tabMyCalendar.addEventListener('click', () => {
         inspectModeUser = null;
         tabMyCalendar.classList.add('active');
@@ -1211,6 +1423,7 @@
         userCalendarSection.style.display = 'flex';
         renderCalendar();
       });
+
 
       tabTeamDashboard.addEventListener('click', () => {
         tabTeamDashboard.classList.add('active');
