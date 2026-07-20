@@ -17,44 +17,52 @@
 
   <style>
     /* ==========================================================================
-       DESIGN SYSTEM & VARIAVEIS
+       DESIGN SYSTEM & VARIAVEIS (INSPIRADO NA GOL LINHAS AEREAS)
        ========================================================================== */
     :root {
-      --bg-main: #F6F3EC;
+      --bg-main: #F4F5F7;
       --bg-card: #FFFFFF;
-      --border-card: #E5DFD3;
-      --border-focus: #B7742C;
-      --text-main: #21262B;
-      --text-muted: #626B73;
-      --text-light: #8E969D;
+      --border-card: #E1E4EA;
+      --border-focus: #FF6A00;
+      --text-main: #1C232B;
+      --text-muted: #5E6773;
+      --text-light: #8C96A3;
 
-      --color-presencial: #B7742C;
-      --bg-presencial: #FDF7ED;
-      --border-presencial: #EAD5B7;
-      --text-presencial: #7E4B13;
+      /* Cores GOL */
+      --gol-orange: #FF6A00;
+      --gol-orange-hover: #E55F00;
+      --bg-gol-orange: #FFF4EC;
+      --border-gol-orange: #FFD4B8;
 
-      --color-homeoffice: #3E7C6B;
-      --bg-homeoffice: #EDF6F3;
-      --border-homeoffice: #BCDCD3;
-      --text-homeoffice: #235246;
+      /* Cores de Status */
+      --color-presencial: #D97706;
+      --bg-presencial: #FFFBEB;
+      --border-presencial: #FDE68A;
+      --text-presencial: #92400E;
 
-      --color-falta: #A63D40;
-      --bg-falta: #FDF0F0;
-      --border-falta: #E8C4C5;
-      --text-falta: #732629;
+      --color-homeoffice: #059669;
+      --bg-homeoffice: #ECFDF5;
+      --border-homeoffice: #A7F3D0;
+      --text-homeoffice: #065F46;
 
+      --color-falta: #DC2626;
+      --bg-falta: #FEF2F2;
+      --border-falta: #FECACA;
+      --text-falta: #991B1B;
+
+      /* Fontes */
       --font-serif: 'Fraunces', serif;
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'IBM Plex Mono', monospace;
 
-      --radius-sm: 6px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
       --radius-full: 9999px;
 
-      --shadow-sm: 0 2px 4px rgba(33, 38, 43, 0.03);
-      --shadow-md: 0 4px 16px rgba(33, 38, 43, 0.06), 0 1px 3px rgba(33, 38, 43, 0.04);
-      --shadow-lg: 0 12px 32px rgba(33, 38, 43, 0.12), 0 2px 6px rgba(33, 38, 43, 0.04);
+      --shadow-sm: 0 2px 5px rgba(255, 106, 0, 0.04), 0 1px 2px rgba(28, 35, 43, 0.03);
+      --shadow-md: 0 6px 20px rgba(28, 35, 43, 0.06), 0 1px 3px rgba(28, 35, 43, 0.04);
+      --shadow-lg: 0 16px 36px rgba(28, 35, 43, 0.12), 0 4px 10px rgba(28, 35, 43, 0.04);
 
       --transition-fast: 0.15s ease;
       --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -90,11 +98,12 @@
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: var(--radius-md);
-      padding: 10px 18px;
+      padding: 12px 20px;
       font-size: 0.825rem;
       box-shadow: var(--shadow-sm);
       flex-wrap: wrap;
       gap: 12px;
+      border-left: 4px solid var(--gol-orange);
     }
 
     .connection-status {
@@ -110,8 +119,8 @@
       border-radius: 50%;
       background-color: #D3CBBD;
     }
-    .status-dot.online { background-color: #3E7C6B; box-shadow: 0 0 8px rgba(62, 124, 107, 0.5); }
-    .status-dot.local { background-color: #B7742C; }
+    .status-dot.online { background-color: #059669; box-shadow: 0 0 8px rgba(5, 150, 105, 0.5); }
+    .status-dot.local { background-color: var(--gol-orange); }
 
     .user-session-group {
       display: flex;
@@ -122,24 +131,36 @@
     .role-badge {
       font-family: var(--font-mono);
       font-size: 0.7rem;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
       font-weight: 600;
       text-transform: uppercase;
     }
-    .role-badge.gestor { background-color: #EAE6FF; color: #53389E; border: 1px solid #D6BBFB; }
+    .role-badge.gestor { background-color: var(--bg-gol-orange); color: var(--gol-orange); border: 1px solid var(--border-gol-orange); }
     .role-badge.colaborador { background-color: #F0F9FF; color: #026AA7; border: 1px solid #B9E6FE; }
 
-    /* CABECALHO ESTILO LEDGER */
+    /* CABECALHO ESTILO GOL */
     .header-card {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: var(--radius-md);
-      padding: 24px 28px;
+      padding: 26px 30px;
       box-shadow: var(--shadow-md);
       display: flex;
       flex-direction: column;
       gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gol-orange) 0%, #FF9248 100%);
     }
 
     .header-top {
@@ -157,18 +178,18 @@
       font-size: 0.725rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--color-presencial);
-      background: var(--bg-presencial);
-      border: 1px solid var(--border-presencial);
-      padding: 3px 8px;
+      color: var(--gol-orange);
+      background: var(--bg-gol-orange);
+      border: 1px solid var(--border-gol-orange);
+      padding: 4px 10px;
       border-radius: var(--radius-sm);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .header-title {
       font-family: var(--font-serif);
-      font-size: 2rem;
-      font-weight: 600;
+      font-size: 2.1rem;
+      font-weight: 700;
       color: var(--text-main);
       letter-spacing: -0.02em;
     }
@@ -180,10 +201,10 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 8px 14px;
+      padding: 9px 16px;
       font-family: var(--font-sans);
       font-size: 0.85rem;
-      font-weight: 500;
+      font-weight: 600;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-card);
       background-color: var(--bg-card);
@@ -193,13 +214,14 @@
       user-select: none;
     }
 
-    .btn:hover { background-color: var(--bg-main); border-color: #D3CBBD; }
+    .btn:hover { background-color: var(--bg-main); border-color: #C8CDD6; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary { background-color: var(--text-main); color: #FFFFFF; border-color: var(--text-main); }
-    .btn-primary:hover { background-color: #384047; color: #FFFFFF; }
+    .btn-primary { background-color: var(--gol-orange); color: #FFFFFF; border-color: var(--gol-orange); }
+    .btn-primary:hover { background-color: var(--gol-orange-hover); border-color: var(--gol-orange-hover); color: #FFFFFF; }
     .btn-danger { background-color: var(--bg-falta); color: var(--text-falta); border-color: var(--border-falta); }
     .btn-danger:hover { background-color: #F8DCDC; }
     .btn-icon { padding: 8px 10px; }
+
 
     /* NAVEGACAO DE ABAS DO GESTOR */
     .view-switcher-bar {
@@ -414,10 +436,9 @@
       </div>
 
       <div class="user-session-group">
-        <button id="btnConfigFirebase" class="btn" style="padding: 4px 10px; font-size: 0.75rem;">⚙️ Configurar Firebase</button>
         <span id="userInfo" style="display: none; font-weight: 600;"></span>
         <span id="userRoleBadge" class="role-badge colaborador" style="display: none;">Colaborador</span>
-        <button id="btnAuthAction" class="btn btn-primary" style="padding: 4px 10px; font-size: 0.75rem;">Entrar / Cadastrar</button>
+        <button id="btnAuthAction" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem;">Entrar / Cadastrar</button>
       </div>
     </div>
 
@@ -425,10 +446,11 @@
     <header class="header-card">
       <div class="header-top">
         <div class="header-title-group">
-          <span class="header-badge">Gestão de Frequência & Presença</span>
+          <span class="header-badge">✈️ VOE GOL &bull; GESTÃO DE PRESENÇA</span>
           <h1 class="header-title">Agenda Inteligente</h1>
-          <p class="header-subtitle">Monitore a presença presencial, remota e de equipe com autenticação via E-mail</p>
+          <p class="header-subtitle">Monitore a presença presencial, remota e de equipe com facilidade e elegância</p>
         </div>
+
 
         <div class="header-actions">
           <button id="btnExportCsv" class="btn" title="Baixar relatório do mês em CSV">
@@ -1285,8 +1307,11 @@
 
 
       // Firebase Config Modal Events
-      btnConfigFirebase.addEventListener('click', () => configModalOverlay.classList.add('active'));
+      if (btnConfigFirebase) {
+        btnConfigFirebase.addEventListener('click', () => configModalOverlay.classList.add('active'));
+      }
       btnConfigClose.addEventListener('click', () => configModalOverlay.classList.remove('active'));
+
 
       btnSaveFirebaseConfig.addEventListener('click', () => {
         const val = firebaseConfigInput.value.trim();
