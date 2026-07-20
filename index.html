@@ -420,11 +420,11 @@
     /* MODAL DE AUTENTICACAO, CONFIG E SELECAO */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(10, 14, 23, 0.75); backdrop-filter: blur(8px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 100; opacity: 0; visibility: hidden; pointer-events: none; transition: all var(--transition-fast); padding: 16px;
+      background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s ease; padding: 16px;
     }
-    .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-overlay.active { display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
 
     .modal-card {
       background: var(--bg-card); border: 1px solid var(--border-card-hover); border-radius: var(--radius-lg);
@@ -434,8 +434,9 @@
 
     .modal-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .modal-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 600; color: #FFFFFF; }
-    .modal-close-btn { background: transparent; border: none; font-size: 1.4rem; color: var(--text-light); cursor: pointer; }
-    .modal-close-btn:hover { color: #FFFFFF; }
+    .modal-close-btn { background: transparent; border: none; font-size: 1.6rem; color: var(--text-muted); cursor: pointer; padding: 4px 10px; border-radius: 6px; line-height: 1; }
+    .modal-close-btn:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.1); }
+
 
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
@@ -1638,12 +1639,15 @@
         modalNoteInput.value = existing.note || '';
 
         highlightSelectedStatusBtn(currentSelectedStatus);
+        modalOverlay.style.display = 'flex';
         modalOverlay.classList.add('active');
       }
 
       function closeModal() {
         modalOverlay.classList.remove('active');
+        modalOverlay.style.display = 'none';
       }
+
 
       if (btnModalClose) btnModalClose.addEventListener('click', closeModal);
       if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
