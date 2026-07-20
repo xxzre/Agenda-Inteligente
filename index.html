@@ -760,23 +760,23 @@
           <span id="modalDateTag" style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Dia 00/00/0000</span>
           <h2 id="modalDateTitle" class="modal-title">Segunda-feira</h2>
         </div>
-        <button id="btnModalClose" class="modal-close-btn">&times;</button>
+        <button id="btnModalClose" type="button" class="modal-close-btn" aria-label="Fechar">&times;</button>
       </div>
 
       <div id="statusBtnContainer" class="status-options-grid">
-        <button class="status-option-btn presencial" data-status="presencial">
+        <button type="button" class="status-option-btn presencial" data-status="presencial">
           <span>🏢 Presencial</span>
           <span style="font-family: var(--font-mono); font-size: 0.7rem;">Tecla 1</span>
         </button>
-        <button class="status-option-btn homeoffice" data-status="home_office">
+        <button type="button" class="status-option-btn homeoffice" data-status="home_office">
           <span>🏠 Home Office</span>
           <span style="font-family: var(--font-mono); font-size: 0.7rem;">Tecla 2</span>
         </button>
-        <button class="status-option-btn falta" data-status="falta">
+        <button type="button" class="status-option-btn falta" data-status="falta">
           <span>❌ Falta</span>
           <span style="font-family: var(--font-mono); font-size: 0.7rem;">Tecla 3</span>
         </button>
-        <button class="status-option-btn" data-status="clear" style="border-style: dashed; color: var(--text-muted);">
+        <button type="button" class="status-option-btn" data-status="clear" style="border-style: dashed; color: var(--text-muted);">
           <span>🧹 Limpar Marcação</span>
           <span style="font-family: var(--font-mono); font-size: 0.7rem;">Tecla 0</span>
         </button>
@@ -788,10 +788,12 @@
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px;">
-        <button id="btnSaveNote" class="btn btn-primary">Salvar</button>
+        <button id="btnCancelModal" type="button" class="btn">Cancelar</button>
+        <button id="btnSaveNote" type="button" class="btn btn-primary">Salvar Marcação</button>
       </div>
     </div>
   </div>
+
 
   <!-- MODAL DE AUTENTICACAO (EMAIL E SENHA) -->
   <div id="authModalOverlay" class="modal-overlay">
@@ -947,7 +949,9 @@
       const modalDateTitle = document.getElementById('modalDateTitle');
       const modalNoteInput = document.getElementById('modalNoteInput');
       const btnModalClose = document.getElementById('btnModalClose');
+      const btnCancelModal = document.getElementById('btnCancelModal');
       const btnSaveNote = document.getElementById('btnSaveNote');
+
 
       const authModalOverlay = document.getElementById('authModalOverlay');
       const authForm = document.getElementById('authForm');
@@ -1603,6 +1607,20 @@
       });
 
       // Modal de Status
+      let currentSelectedStatus = null;
+
+      function highlightSelectedStatusBtn(status) {
+        document.querySelectorAll('#statusBtnContainer .status-option-btn').forEach(btn => {
+          if (btn.dataset.status === status) {
+            btn.style.outline = '2px solid var(--gol-orange)';
+            btn.style.boxShadow = '0 0 12px rgba(255, 106, 0, 0.4)';
+          } else {
+            btn.style.outline = 'none';
+            btn.style.boxShadow = 'none';
+          }
+        });
+      }
+
       function openModal(day) {
         selectedDayNumber = day;
         const year = currentDate.getFullYear();
@@ -1611,55 +1629,86 @@
 
         modalDateTag.textContent = `Dia ${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
         modalDateTitle.textContent = WEEKDAY_NAMES_FULL[dateObj.getDay()];
-        modalNoteInput.value = monthData[day]?.note || '';
+        
+        const existing = monthData[day] || {};
+        currentSelectedStatus = existing.status || null;
+        modalNoteInput.value = existing.note || '';
+
+        highlightSelectedStatusBtn(currentSelectedStatus);
         modalOverlay.classList.add('active');
       }
 
-      btnModalClose.addEventListener('click', () => modalOverlay.classList.remove('active'));
+      function closeModal() {
+        modalOverlay.classList.remove('active');
+      }
+
+      if (btnModalClose) btnModalClose.addEventListener('click', closeModal);
+      if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
 
       // Fechar ao clicar no fundo escuro fora do card
       modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+        if (e.target === modalOverlay) closeModal();
       });
 
       async function setDayStatus(status) {
         if (!selectedDayNumber) return;
+        currentSelectedStatus = status;
+        highlightSelectedStatusBtn(status);
+
         if (status === 'clear') {
           delete monthData[selectedDayNumber];
         } else {
-          monthData[selectedDayNumber] = { status: status, note: modalNoteInput.value };
+          monthData[selectedDayNumber] = {
+            status: status,
+            note: modalNoteInput.value.trim()
+          };
         }
-        modalOverlay.classList.remove('active');
-        renderCalendar(true); // renderiza na tela instantaneamente sem aguardar a rede
-        await saveMonthData(); // salva no Firestore e localStorage de forma transparente
+        closeModal();
+        renderCalendar(true);
+        await saveMonthData();
       }
 
       document.querySelectorAll('#statusBtnContainer .status-option-btn').forEach(btn => {
         btn.addEventListener('click', () => setDayStatus(btn.dataset.status));
       });
 
-      btnSaveNote.addEventListener('click', async () => {
-        if (selectedDayNumber && monthData[selectedDayNumber]) {
-          monthData[selectedDayNumber].note = modalNoteInput.value;
-          modalOverlay.classList.remove('active');
+      if (btnSaveNote) {
+        btnSaveNote.addEventListener('click', async () => {
+          if (!selectedDayNumber) return;
+          const noteText = modalNoteInput.value.trim();
+
+          if (currentSelectedStatus && currentSelectedStatus !== 'clear') {
+            monthData[selectedDayNumber] = {
+              status: currentSelectedStatus,
+              note: noteText
+            };
+          } else if (noteText) {
+            monthData[selectedDayNumber] = {
+              status: monthData[selectedDayNumber]?.status || 'presencial',
+              note: noteText
+            };
+          } else {
+            delete monthData[selectedDayNumber];
+          }
+
+          closeModal();
           renderCalendar(true);
           await saveMonthData();
-        } else {
-          modalOverlay.classList.remove('active');
-        }
-      });
+        });
+      }
 
       // Atalhos de teclado (1: Presencial, 2: Home Office, 3: Falta, 0: Limpar, Esc: Fechar)
       window.addEventListener('keydown', (e) => {
         if (!modalOverlay.classList.contains('active')) return;
-        if (document.activeElement === modalNoteInput) return; // Se estiver digitando na nota, ignora teclas numéricas
+        if (document.activeElement === modalNoteInput) return;
 
         if (e.key === '1') setDayStatus('presencial');
         else if (e.key === '2') setDayStatus('home_office');
         else if (e.key === '3') setDayStatus('falta');
         else if (e.key === '0') setDayStatus('clear');
-        else if (e.key === 'Escape') modalOverlay.classList.remove('active');
+        else if (e.key === 'Escape') closeModal();
       });
+
 
 
       // Mês Nav
