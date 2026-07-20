@@ -419,12 +419,19 @@
 
     /* MODAL DE AUTENTICACAO, CONFIG E SELECAO */
     .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(10px);
-      display: none; align-items: center; justify-content: center;
-      z-index: 9999; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.2s ease; padding: 16px;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(10, 14, 23, 0.88);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 16px;
     }
-    .modal-overlay.active { display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+    .modal-overlay.active { display: flex !important; }
+
 
     .modal-card {
       background: var(--bg-card); border: 1px solid var(--border-card-hover); border-radius: var(--radius-lg);
@@ -1630,41 +1637,32 @@
       }
 
       function openModal(day) {
-        try {
-          selectedDayNumber = day;
-          const year = currentDate.getFullYear();
-          const month = currentDate.getMonth();
-          const dateObj = new Date(year, month, day);
+        selectedDayNumber = day;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const dateObj = new Date(year, month, day);
 
-          if (modalDateTag) modalDateTag.textContent = `Dia ${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
-          if (modalDateTitle) modalDateTitle.textContent = WEEKDAY_NAMES_FULL[dateObj.getDay()];
-          
-          const existing = monthData[day] || {};
-          currentSelectedStatus = existing.status || null;
-          if (modalNoteInput) modalNoteInput.value = existing.note || '';
+        if (modalDateTag) modalDateTag.textContent = `Dia ${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
+        if (modalDateTitle) modalDateTitle.textContent = WEEKDAY_NAMES_FULL[dateObj.getDay()];
+        
+        const existing = monthData[day] || {};
+        currentSelectedStatus = existing.status || null;
+        if (modalNoteInput) modalNoteInput.value = existing.note || '';
 
-          highlightSelectedStatusBtn(currentSelectedStatus);
-          if (modalOverlay) {
-            modalOverlay.style.display = 'flex';
-            modalOverlay.style.opacity = '1';
-            modalOverlay.style.visibility = 'visible';
-            modalOverlay.style.pointerEvents = 'auto';
-            modalOverlay.classList.add('active');
-          }
-        } catch (e) {
-          console.error("Erro ao abrir modal:", e);
+        highlightSelectedStatusBtn(currentSelectedStatus);
+        if (modalOverlay) {
+          modalOverlay.style.setProperty('display', 'flex', 'important');
+          modalOverlay.classList.add('active');
         }
       }
 
       function closeModal() {
         if (modalOverlay) {
           modalOverlay.classList.remove('active');
-          modalOverlay.style.display = 'none';
-          modalOverlay.style.opacity = '0';
-          modalOverlay.style.visibility = 'hidden';
-          modalOverlay.style.pointerEvents = 'none';
+          modalOverlay.style.setProperty('display', 'none', 'important');
         }
       }
+
 
       if (btnModalClose) btnModalClose.onclick = closeModal;
       if (btnCancelModal) btnCancelModal.onclick = closeModal;
