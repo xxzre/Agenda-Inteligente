@@ -861,9 +861,13 @@
               userInfoEl.style.display = 'inline';
               btnAuthAction.textContent = 'Sair';
 
-              // Buscar perfil e função no Firestore
+              // Buscar perfil e função no Firestore com retry para evitar race conditions no cadastro
               try {
-                const userDoc = await db.collection('users').doc(user.uid).get();
+                let userDoc = await db.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                  await new Promise(r => setTimeout(r, 600));
+                  userDoc = await db.collection('users').doc(user.uid).get();
+                }
                 if (userDoc.exists) {
                   userRole = userDoc.data().role || 'colaborador';
                 }
@@ -878,6 +882,7 @@
               } else {
                 gestorTabContainer.style.display = 'none';
               }
+
             } else {
               currentUser = null;
               userRole = 'colaborador';
@@ -1237,11 +1242,23 @@
               role: role,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+
+            // Atualizar imediatamente o papel/role na memória e na interface
+            userRole = role;
+            userRoleBadgeEl.textContent = userRole === 'gestor' ? 'Gestor' : 'Colaborador';
+            userRoleBadgeEl.className = `role-badge ${userRole}`;
+            userRoleBadgeEl.style.display = 'inline';
+            if (userRole === 'gestor') {
+              gestorTabContainer.style.display = 'flex';
+            } else {
+              gestorTabContainer.style.display = 'none';
+            }
           } else {
             await auth.signInWithEmailAndPassword(email, password);
           }
           authModalOverlay.classList.remove('active');
         } catch (err) {
+
           const errCode = err.code || '';
           let msg = AUTH_ERROR_MAP[errCode] || err.message;
           
