@@ -757,6 +757,64 @@
         </div>
       </section>
 
+      <!-- PAINEL DE METRICAS DE OPERACAO POR DIA DA SEMANA -->
+      <section class="team-table-card" style="padding: 18px 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: #FFFFFF; font-weight: 600;">📊 Distribuição Atual da Operação por Dia da Semana</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Capacidade diária e ocupação programada de colaboradores (sem rodízio)</span>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gol-orange); font-weight: 700; background: var(--bg-gol-orange); border: 1px solid var(--border-gol-orange); padding: 4px 10px; border-radius: 4px;">CAPACIDADE TOTAL: 36 PAs / DIA</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;">
+          <div style="background: var(--bg-card-day); border: 1px solid var(--border-falta); border-radius: var(--radius-sm); padding: 12px 14px;">
+            <div style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">📅 Segunda-Feira</div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 6px;">
+              <strong style="font-family: var(--font-mono); font-size: 1.35rem; color: var(--text-falta);">32 <span style="font-size: 0.75rem; color: var(--text-muted);">/ 36 PAs</span></strong>
+              <span style="font-size: 0.675rem; font-weight: 700; color: var(--text-falta); background: var(--bg-falta); padding: 2px 6px; border-radius: 4px;">🔴 ALTO</span>
+            </div>
+            <span style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">⚠️ Alta concentração</span>
+          </div>
+
+          <div style="background: var(--bg-card-day); border: 1px solid var(--border-homeoffice); border-radius: var(--radius-sm); padding: 12px 14px;">
+            <div style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">📅 Terça-Feira</div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 6px;">
+              <strong style="font-family: var(--font-mono); font-size: 1.35rem; color: var(--text-homeoffice);">14 <span style="font-size: 0.75rem; color: var(--text-muted);">/ 36 PAs</span></strong>
+              <span style="font-size: 0.675rem; font-weight: 700; color: var(--text-homeoffice); background: var(--bg-homeoffice); padding: 2px 6px; border-radius: 4px;">🟢 BAIXO</span>
+            </div>
+            <span style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">✅ Tranquilo</span>
+          </div>
+
+          <div style="background: var(--bg-card-day); border: 1px solid var(--border-presencial); border-radius: var(--radius-sm); padding: 12px 14px;">
+            <div style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">📅 Quarta-Feira</div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 6px;">
+              <strong style="font-family: var(--font-mono); font-size: 1.35rem; color: var(--text-presencial);">26 <span style="font-size: 0.75rem; color: var(--text-muted);">/ 36 PAs</span></strong>
+              <span style="font-size: 0.675rem; font-weight: 700; color: var(--text-presencial); background: var(--bg-presencial); padding: 2px 6px; border-radius: 4px;">🟠 MÉDIO</span>
+            </div>
+            <span style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">✅ Operação estável</span>
+          </div>
+
+          <div style="background: var(--bg-card-day); border: 1px solid var(--border-falta); border-radius: var(--radius-sm); padding: 12px 14px;">
+            <div style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">📅 Quinta-Feira</div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 6px;">
+              <strong style="font-family: var(--font-mono); font-size: 1.35rem; color: var(--text-falta);">29 <span style="font-size: 0.75rem; color: var(--text-muted);">/ 36 PAs</span></strong>
+              <span style="font-size: 0.675rem; font-weight: 700; color: var(--text-falta); background: var(--bg-falta); padding: 2px 6px; border-radius: 4px;">🔴 ALTO</span>
+            </div>
+            <span style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">⚠️ Alta concentração</span>
+          </div>
+
+          <div style="background: var(--bg-card-day); border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 12px 14px;">
+            <div style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">🏠 Sexta-Feira</div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 6px;">
+              <strong style="font-family: var(--font-mono); font-size: 1.35rem; color: var(--text-muted);">0 <span style="font-size: 0.75rem; color: var(--text-muted);">/ 36 PAs</span></strong>
+              <span style="font-size: 0.675rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); padding: 2px 6px; border-radius: 4px;">REMOTA</span>
+            </div>
+            <span style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">🏠 Home Office Coletivo</span>
+          </div>
+        </div>
+      </section>
+
       <!-- GRADE DO CALENDARIO DE AGENDAMENTOS -->
       <main class="calendar-container">
         <div class="weekdays-grid">
@@ -1937,9 +1995,55 @@
         else if (e.key === 'Escape') closeModal();
       });
 
-      // ==========================================================================
-      // LÓGICA DE AGENDAMENTOS COLETIVOS (LIMITE 36 VAGAS)
-      // ==========================================================================
+      // Lista de Integrantes Padrão para Preenchimento Automático por Dia da Semana
+      const MOCK_TEAM_MEMBERS = [
+        { uid: 'mock_1', name: 'Ana Souza', email: 'ana.souza@voegol.com.br' },
+        { uid: 'mock_2', name: 'Carlos Eduardo', email: 'carlos.eduardo@voegol.com.br' },
+        { uid: 'mock_3', name: 'Fernanda Lima', email: 'fernanda.lima@voegol.com.br' },
+        { uid: 'mock_4', name: 'Gabriel Santos', email: 'gabriel.santos@voegol.com.br' },
+        { uid: 'mock_5', name: 'Juliana Costa', email: 'juliana.costa@voegol.com.br' },
+        { uid: 'mock_6', name: 'Lucas Oliveira', email: 'lucas.oliveira@voegol.com.br' },
+        { uid: 'mock_7', name: 'Mariana Pereira', email: 'mariana.pereira@voegol.com.br' },
+        { uid: 'mock_8', name: 'Rodrigo Alves', email: 'rodrigo.alves@voegol.com.br' },
+        { uid: 'mock_9', name: 'Beatriz Rocha', email: 'beatriz.rocha@voegol.com.br' },
+        { uid: 'mock_10', name: 'Diego Martins', email: 'diego.martins@voegol.com.br' },
+        { uid: 'mock_11', name: 'Camila Ribeiro', email: 'camila.ribeiro@voegol.com.br' },
+        { uid: 'mock_12', name: 'Thiago Carvalho', email: 'thiago.carvalho@voegol.com.br' },
+        { uid: 'mock_13', name: 'Aline Barbosa', email: 'aline.barbosa@voegol.com.br' },
+        { uid: 'mock_14', name: 'Felipe Melo', email: 'felipe.melo@voegol.com.br' },
+        { uid: 'mock_15', name: 'Larissa Ferreira', email: 'larissa.ferreira@voegol.com.br' },
+        { uid: 'mock_16', name: 'Bruno Castro', email: 'bruno.castro@voegol.com.br' },
+        { uid: 'mock_17', name: 'Patricia Gomes', email: 'patricia.gomes@voegol.com.br' },
+        { uid: 'mock_18', name: 'Rafael Silva', email: 'rafael.silva@voegol.com.br' },
+        { uid: 'mock_19', name: 'Vanessa Lima', email: 'vanessa.lima@voegol.com.br' },
+        { uid: 'mock_20', name: 'Guilherme Cardoso', email: 'guilherme.cardoso@voegol.com.br' },
+        { uid: 'mock_21', name: 'Amanda Nunes', email: 'amanda.nunes@voegol.com.br' },
+        { uid: 'mock_22', name: 'Leonardo Dias', email: 'leonardo.dias@voegol.com.br' },
+        { uid: 'mock_23', name: 'Letícia Mendes', email: 'leticia.mendes@voegol.com.br' },
+        { uid: 'mock_24', name: 'Marcelo Ramos', email: 'marcelo.ramos@voegol.com.br' },
+        { uid: 'mock_25', name: 'Renata Cruz', email: 'renata.cruz@voegol.com.br' },
+        { uid: 'mock_26', name: 'Eduardo Correia', email: 'eduardo.correia@voegol.com.br' },
+        { uid: 'mock_27', name: 'Jessica Teixeira', email: 'jessica.teixeira@voegol.com.br' },
+        { uid: 'mock_28', name: 'Matheus Duarte', email: 'matheus.duarte@voegol.com.br' },
+        { uid: 'mock_29', name: 'Carolina Farias', email: 'carolina.farias@voegol.com.br' },
+        { uid: 'mock_30', name: 'Vinícius Peixoto', email: 'vinicius.peixoto@voegol.com.br' },
+        { uid: 'mock_31', name: 'Tatiane Moreira', email: 'tatiane.moreira@voegol.com.br' },
+        { uid: 'mock_32', name: 'André Machado', email: 'andre.machado@voegol.com.br' }
+      ];
+
+      function getDefaultBookingsForDate(dateObj) {
+        const dayOfWeek = dateObj.getDay(); // 0: Dom, 1: Seg, 2: Ter, 3: Qua, 4: Qui, 5: Sex, 6: Sáb
+        let targetCount = 0;
+
+        if (dayOfWeek === 1) targetCount = 32;      // Segunda-feira (32 PAs - trocado com Terça)
+        else if (dayOfWeek === 2) targetCount = 14; // Terça-feira (14 PAs - trocado com Segunda)
+        else if (dayOfWeek === 3) targetCount = 26; // Quarta-feira (26 PAs)
+        else if (dayOfWeek === 4) targetCount = 29; // Quinta-feira (29 PAs)
+        else targetCount = 0;                        // Sexta-feira (Home Office) / Sáb / Dom
+
+        return MOCK_TEAM_MEMBERS.slice(0, targetCount).map(u => ({ ...u, isDefault: true }));
+      }
+
       function getDateKey(day) {
         const y = currentDate.getFullYear();
         const m = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -2037,7 +2141,11 @@
           if (isCurrentMonthYear && day === realToday.getDate()) card.classList.add('today');
 
           const dateKey = getDateKey(day);
-          const usersBooked = bookingMonthData[dateKey] || [];
+          if (!bookingMonthData[dateKey]) {
+            bookingMonthData[dateKey] = getDefaultBookingsForDate(dateObj);
+          }
+
+          const usersBooked = bookingMonthData[dateKey];
           const count = usersBooked.length;
           const isUserBooked = usersBooked.some(u => u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail));
           if (isUserBooked) myBookingsCount++;
@@ -2051,9 +2159,20 @@
           card.appendChild(dayHeader);
 
           const stamp = document.createElement('div');
-          if (count >= 36) {
+          if (dateObj.getDay() === 5) {
+            stamp.className = 'stamp-badge';
+            stamp.style.color = 'var(--text-muted)';
+            stamp.style.borderColor = 'var(--border-card)';
+            stamp.innerHTML = `<span>🏠</span><span class="stamp-text">Home Office</span>`;
+          } else if (count >= 36) {
             stamp.className = 'stamp-badge falta';
             stamp.innerHTML = `<span>🔴</span><span class="stamp-text">36/36 LOTADO</span>`;
+          } else if (count >= 28) {
+            stamp.className = isUserBooked ? 'stamp-badge presencial' : 'stamp-badge falta';
+            stamp.innerHTML = `<span>🔴</span><span class="stamp-text">${count}/36 Vagas</span>`;
+          } else if (count >= 20) {
+            stamp.className = isUserBooked ? 'stamp-badge presencial' : 'stamp-badge presencial';
+            stamp.innerHTML = `<span>🟠</span><span class="stamp-text">${count}/36 Vagas</span>`;
           } else if (count > 0) {
             stamp.className = isUserBooked ? 'stamp-badge presencial' : 'stamp-badge homeoffice';
             stamp.innerHTML = `<span>🟢</span><span class="stamp-text">${count}/36 Vagas</span>`;
@@ -2082,7 +2201,10 @@
         const month = currentDate.getMonth();
         const dateObj = new Date(year, month, day);
         const dateKey = getDateKey(day);
-        const usersBooked = bookingMonthData[dateKey] || [];
+        if (!bookingMonthData[dateKey]) {
+          bookingMonthData[dateKey] = getDefaultBookingsForDate(dateObj);
+        }
+        const usersBooked = bookingMonthData[dateKey];
         const count = usersBooked.length;
         const currentUserId = currentUser ? currentUser.uid : 'local';
         const currentUserEmail = currentUser ? currentUser.email : null;
@@ -2159,8 +2281,13 @@
 
       async function toggleBooking() {
         if (!selectedBookingDay) return;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const dateObj = new Date(year, month, selectedBookingDay);
         const dateKey = getDateKey(selectedBookingDay);
-        if (!bookingMonthData[dateKey]) bookingMonthData[dateKey] = [];
+        if (!bookingMonthData[dateKey]) {
+          bookingMonthData[dateKey] = getDefaultBookingsForDate(dateObj);
+        }
 
         const usersBooked = bookingMonthData[dateKey];
         const currentUserId = currentUser ? currentUser.uid : 'local';
