@@ -1995,65 +1995,39 @@
         else if (e.key === 'Escape') closeModal();
       });
 
+      function getWeekdayBaseCount(dayOfWeek) {
+        if (dayOfWeek === 1) return 32; // Segunda-feira
+        if (dayOfWeek === 2) return 14; // Terça-feira
+        if (dayOfWeek === 3) return 26; // Quarta-feira
+        if (dayOfWeek === 4) return 29; // Quinta-feira
+        return 0; // Sexta-feira / Sáb / Dom
+      }
+
       function getDefaultBookingsForDate(dateObj) {
         const dayOfWeek = dateObj.getDay(); // 0: Dom, 1: Seg, 2: Ter, 3: Qua, 4: Qui, 5: Sex, 6: Sáb
 
-        let namedList = [];
-        let targetCount = 0;
-
-        if (dayOfWeek === 1) { // Segunda-feira: 32 PAs
-          namedList = [
+        if (dayOfWeek === 1) { // Segunda-feira
+          return [
             { uid: 'default_brandon', name: 'Brandon', email: 'brandon@voegol.com.br', isDefault: true }
           ];
-          targetCount = 32;
-        } else if (dayOfWeek === 2) { // Terça-feira: 14 PAs
-          namedList = [
+        } else if (dayOfWeek === 2) { // Terça-feira
+          return [
             { uid: 'default_fabiano', name: 'Fabiano', email: 'fabiano@voegol.com.br', isDefault: true },
             { uid: 'default_camila', name: 'Camila', email: 'camila@voegol.com.br', isDefault: true },
             { uid: 'default_cristiane', name: 'Cristiane', email: 'cristiane@voegol.com.br', isDefault: true }
           ];
-          targetCount = 14;
-        } else if (dayOfWeek === 3) { // Quarta-feira: 26 PAs
-          namedList = [
+        } else if (dayOfWeek === 3) { // Quarta-feira
+          return [
             { uid: 'default_valeria', name: 'Valeria', email: 'valeria@voegol.com.br', isDefault: true },
             { uid: 'default_luciene', name: 'Luciene', email: 'luciene@voegol.com.br', isDefault: true }
           ];
-          targetCount = 26;
-        } else if (dayOfWeek === 4) { // Quinta-feira: 29 PAs
-          namedList = [
+        } else if (dayOfWeek === 4) { // Quinta-feira
+          return [
             { uid: 'default_renata', name: 'Renata', email: 'renata@voegol.com.br', isDefault: true }
           ];
-          targetCount = 29;
-        } else {
-          return [];
         }
 
-        const teamFillers = [
-          "Ana Souza", "Carlos Eduardo", "Fernanda Lima", "Gabriel Santos", "Juliana Costa",
-          "Lucas Oliveira", "Mariana Pereira", "Rodrigo Alves", "Beatriz Rocha", "Diego Martins",
-          "Camila Ribeiro", "Thiago Carvalho", "Aline Barbosa", "Felipe Melo", "Larissa Ferreira",
-          "Bruno Castro", "Patricia Gomes", "Rafael Silva", "Vanessa Lima", "Guilherme Cardoso",
-          "Amanda Nunes", "Leonardo Dias", "Letícia Mendes", "Marcelo Ramos", "Renata Cruz",
-          "Eduardo Correia", "Jessica Teixeira", "Matheus Duarte", "Carolina Farias", "Vinícius Peixoto",
-          "Tatiane Moreira", "André Machado"
-        ];
-
-        const result = [...namedList];
-        let fillerIdx = 0;
-        while (result.length < targetCount && fillerIdx < teamFillers.length) {
-          const name = teamFillers[fillerIdx];
-          if (!result.some(r => r.name.toLowerCase() === name.toLowerCase())) {
-            result.push({
-              uid: `default_filler_${fillerIdx + 1}`,
-              name: name,
-              email: `${name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '.')}@voegol.com.br`,
-              isDefault: true
-            });
-          }
-          fillerIdx++;
-        }
-
-        return result;
+        return []; // Sexta-feira (Home Office) / Sáb / Dom
       }
 
       function getDateKey(day) {
@@ -2069,14 +2043,14 @@
         const monthStr = String(currentDate.getMonth() + 1).padStart(2, '0');
         const prefix = `${year}-${monthStr}`;
 
-        // Limpar chaves antigas com listas curtas da versão anterior
+        // Limpar chaves antigas com fillers
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if (key && key.startsWith(`booking:${prefix}`)) {
             try {
               const items = JSON.parse(localStorage.getItem(key)) || [];
-              if (items.length < 5 && items.some(u => u.uid && u.uid.startsWith('default_'))) {
+              if (items.some(u => u.uid && (u.uid.startsWith('default_filler_') || u.uid.startsWith('mock_')))) {
                 keysToRemove.push(key);
               }
             } catch(e){}
@@ -2102,7 +2076,7 @@
             snapshot.forEach(doc => {
               const data = doc.data();
               const users = data.users || [];
-              if (users.length >= 5 || !users.some(u => u.uid && u.uid.startsWith('default_'))) {
+              if (!users.some(u => u.uid && (u.uid.startsWith('default_filler_') || u.uid.startsWith('mock_')))) {
                 bookingMonthData[doc.id] = users;
                 localStorage.setItem(`booking:${doc.id}`, JSON.stringify(users));
               }
@@ -2176,7 +2150,10 @@
           }
 
           const usersBooked = bookingMonthData[dateKey];
-          const count = usersBooked.length;
+          const customUserCount = usersBooked.filter(u => !u.isDefault).length;
+          const baseCapacity = getWeekdayBaseCount(dateObj.getDay());
+          const displayCount = Math.min(36, baseCapacity + customUserCount);
+
           const isUserBooked = usersBooked.some(u => u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail));
           if (isUserBooked) myBookingsCount++;
 
@@ -2194,18 +2171,18 @@
             stamp.style.color = 'var(--text-muted)';
             stamp.style.borderColor = 'var(--border-card)';
             stamp.innerHTML = `<span>🏠</span><span class="stamp-text">Home Office</span>`;
-          } else if (count >= 36) {
+          } else if (displayCount >= 36) {
             stamp.className = 'stamp-badge falta';
             stamp.innerHTML = `<span>🔴</span><span class="stamp-text">36/36 LOTADO</span>`;
-          } else if (count >= 28) {
+          } else if (displayCount >= 28) {
             stamp.className = isUserBooked ? 'stamp-badge presencial' : 'stamp-badge falta';
-            stamp.innerHTML = `<span>🔴</span><span class="stamp-text">${count}/36 Vagas</span>`;
-          } else if (count >= 20) {
+            stamp.innerHTML = `<span>🔴</span><span class="stamp-text">${displayCount}/36 Vagas</span>`;
+          } else if (displayCount >= 20) {
             stamp.className = isUserBooked ? 'stamp-badge presencial' : 'stamp-badge presencial';
-            stamp.innerHTML = `<span>🟠</span><span class="stamp-text">${count}/36 Vagas</span>`;
-          } else if (count > 0) {
+            stamp.innerHTML = `<span>🟠</span><span class="stamp-text">${displayCount}/36 Vagas</span>`;
+          } else if (displayCount > 0) {
             stamp.className = isUserBooked ? 'stamp-badge presencial' : 'stamp-badge homeoffice';
-            stamp.innerHTML = `<span>🟢</span><span class="stamp-text">${count}/36 Vagas</span>`;
+            stamp.innerHTML = `<span>🟢</span><span class="stamp-text">${displayCount}/36 Vagas</span>`;
           } else {
             stamp.className = 'stamp-badge';
             stamp.style.color = 'var(--text-muted)';
@@ -2235,20 +2212,23 @@
           bookingMonthData[dateKey] = getDefaultBookingsForDate(dateObj);
         }
         const usersBooked = bookingMonthData[dateKey];
-        const count = usersBooked.length;
+        const customUserCount = usersBooked.filter(u => !u.isDefault).length;
+        const baseCapacity = getWeekdayBaseCount(dateObj.getDay());
+        const displayCount = Math.min(36, baseCapacity + customUserCount);
+
         const currentUserId = currentUser ? currentUser.uid : 'local';
         const currentUserEmail = currentUser ? currentUser.email : null;
         const isBooked = usersBooked.some(u => u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail));
 
         if (bookingModalDateTag) bookingModalDateTag.textContent = `Dia ${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
         if (bookingModalDateTitle) bookingModalDateTitle.textContent = WEEKDAY_NAMES_FULL[dateObj.getDay()];
-        if (bookingCountText) bookingCountText.textContent = `${count} / 36`;
+        if (bookingCountText) bookingCountText.textContent = `${displayCount} / 36`;
 
         if (bookingProgressFill) {
-          const perc = Math.min(100, Math.round((count / 36) * 100));
+          const perc = Math.min(100, Math.round((displayCount / 36) * 100));
           bookingProgressFill.style.width = `${perc}%`;
-          if (count >= 36) bookingProgressFill.className = 'progress-fill falta';
-          else if (count >= 28) bookingProgressFill.className = 'progress-fill presencial';
+          if (displayCount >= 36) bookingProgressFill.className = 'progress-fill falta';
+          else if (displayCount >= 28) bookingProgressFill.className = 'progress-fill presencial';
           else bookingProgressFill.className = 'progress-fill homeoffice';
         }
 
@@ -2258,7 +2238,7 @@
             btnToggleBooking.className = 'btn btn-danger';
             btnToggleBooking.disabled = false;
             btnToggleBooking.style.width = '100%';
-          } else if (count >= 36) {
+          } else if (displayCount >= 36) {
             btnToggleBooking.textContent = '🚫 Vagas Esgotadas para este Dia (36 / 36)';
             btnToggleBooking.className = 'btn';
             btnToggleBooking.disabled = true;
@@ -2271,10 +2251,10 @@
           }
         }
 
-        if (bookingListCount) bookingListCount.textContent = count;
+        if (bookingListCount) bookingListCount.textContent = usersBooked.length;
         if (bookingUsersList) {
           bookingUsersList.innerHTML = '';
-          if (count === 0) {
+          if (usersBooked.length === 0) {
             bookingUsersList.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 16px;">Nenhuma pessoa agendada para este dia ainda.</div>`;
           } else {
             usersBooked.forEach((u, index) => {
@@ -2329,7 +2309,11 @@
         if (existingIndex >= 0) {
           usersBooked.splice(existingIndex, 1);
         } else {
-          if (usersBooked.length >= 36) {
+          const customUserCount = usersBooked.filter(u => !u.isDefault).length;
+          const baseCapacity = getWeekdayBaseCount(dateObj.getDay());
+          const displayCount = Math.min(36, baseCapacity + customUserCount);
+
+          if (displayCount >= 36) {
             alert("Desculpe! O limite máximo de 36 vagas para este dia já foi atingido.");
             return;
           }
