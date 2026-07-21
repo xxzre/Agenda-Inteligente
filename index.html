@@ -954,11 +954,26 @@
         </div>
       </div>
 
-      <!-- BOTÃO DE AÇÃO PARA RESERVA -->
+      <!-- BOTÃO DE AÇÃO PARA RESERVA INDIVIDUAL -->
       <div>
         <button id="btnToggleBooking" type="button" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 0.95rem; gap: 8px;">
           ➕ Reservar Minha Vaga Presencial
         </button>
+      </div>
+
+      <!-- PAINEL EXCLUSIVO DO GESTOR PARA RESERVAR QUALQUER QTD DE VAGAS -->
+      <div id="gestorBookingPanel" style="display: none; background: rgba(255, 107, 0, 0.08); border: 1px solid var(--border-gol-orange); border-radius: var(--radius-md); padding: 14px; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--gol-orange);">⚙️ Painel do Gestor (Reservar Vagas para Equipe)</span>
+          <span id="gestorVagasRestantes" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-light); font-weight: 600;">-- vagas livres</span>
+        </div>
+        
+        <form id="gestorAddForm" style="display: flex; gap: 8px;" onsubmit="return false;">
+          <input type="text" id="gestorMemberNameInput" class="form-input" placeholder="Nome da pessoa (opcional)" style="flex: 1; font-size: 0.85rem; padding: 8px 10px;" />
+          <button id="btnGestorAddBooking" type="button" class="btn btn-primary" style="font-size: 0.85rem; padding: 8px 14px; white-space: nowrap;">
+            ➕ Reservar Vaga
+          </button>
+        </form>
       </div>
 
       <!-- LISTA DE INSCRITOS -->
@@ -1149,6 +1164,10 @@
       const bookingCountText = document.getElementById('bookingCountText');
       const bookingProgressFill = document.getElementById('bookingProgressFill');
       const btnToggleBooking = document.getElementById('btnToggleBooking');
+      const gestorBookingPanel = document.getElementById('gestorBookingPanel');
+      const gestorVagasRestantesEl = document.getElementById('gestorVagasRestantes');
+      const gestorMemberNameInput = document.getElementById('gestorMemberNameInput');
+      const btnGestorAddBooking = document.getElementById('btnGestorAddBooking');
       const bookingListCount = document.getElementById('bookingListCount');
       const bookingUsersList = document.getElementById('bookingUsersList');
 
@@ -2216,6 +2235,17 @@
         const baseCapacity = getWeekdayBaseCount(dateObj.getDay());
         const displayCount = Math.min(36, baseCapacity + customUserCount);
 
+        const freeSpots = Math.max(0, 36 - displayCount);
+        if (gestorVagasRestantesEl) gestorVagasRestantesEl.textContent = `${freeSpots} vagas livres`;
+
+        if (gestorBookingPanel) {
+          if (userRole === 'gestor') {
+            gestorBookingPanel.style.display = 'flex';
+          } else {
+            gestorBookingPanel.style.display = 'none';
+          }
+        }
+
         const currentUserId = currentUser ? currentUser.uid : 'local';
         const currentUserEmail = currentUser ? currentUser.email : null;
         const isBooked = usersBooked.some(u => u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail));
@@ -2261,6 +2291,12 @@
               const isMe = u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail);
               const div = document.createElement('div');
               div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--bg-card-day); border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.85rem;';
+              
+              let deleteBtnHtml = '';
+              if (userRole === 'gestor') {
+                deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover este agendamento">🗑️ Excluir</button>`;
+              }
+
               div.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <div class="member-avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">${(u.name || 'U').charAt(0).toUpperCase()}</div>
@@ -2269,10 +2305,26 @@
                     <span style="display: block; font-size: 0.725rem; color: var(--text-muted);">${u.email || ''}</span>
                   </div>
                 </div>
-                <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-light);">Vaga #${index + 1}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-light);">Vaga #${index + 1}</span>
+                  ${deleteBtnHtml}
+                </div>
               `;
               bookingUsersList.appendChild(div);
             });
+
+            if (userRole === 'gestor') {
+              bookingUsersList.querySelectorAll('.btn-delete-booking').forEach(btn => {
+                btn.onclick = async (e) => {
+                  e.stopPropagation();
+                  const idx = parseInt(btn.dataset.index);
+                  usersBooked.splice(idx, 1);
+                  await saveBookingData(dateKey);
+                  openBookingModal(selectedBookingDay);
+                  renderBookingCalendar(true);
+                };
+              });
+            }
           }
         }
 
@@ -2329,6 +2381,47 @@
         openBookingModal(selectedBookingDay);
         renderBookingCalendar(true);
       }
+
+      async function addGestorBooking() {
+        if (!selectedBookingDay) return;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const dateObj = new Date(year, month, selectedBookingDay);
+        const dateKey = getDateKey(selectedBookingDay);
+        if (!bookingMonthData[dateKey]) {
+          bookingMonthData[dateKey] = getDefaultBookingsForDate(dateObj);
+        }
+
+        const usersBooked = bookingMonthData[dateKey];
+        const customUserCount = usersBooked.filter(u => !u.isDefault).length;
+        const baseCapacity = getWeekdayBaseCount(dateObj.getDay());
+        const displayCount = Math.min(36, baseCapacity + customUserCount);
+
+        if (displayCount >= 36) {
+          alert("Desculpe! A capacidade máxima de 36 vagas para este dia já foi atingida.");
+          return;
+        }
+
+        const rawName = gestorMemberNameInput ? gestorMemberNameInput.value.trim() : '';
+        const personName = rawName || `Reserva Equipe (Vaga #${usersBooked.length + 1})`;
+        const personEmail = rawName ? `${rawName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '.')}@voegol.com.br` : 'reserva.equipe@voegol.com.br';
+
+        usersBooked.push({
+          uid: 'gestor_add_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          name: personName,
+          email: personEmail,
+          bookedAt: new Date().toISOString(),
+          addedByGestor: true
+        });
+
+        if (gestorMemberNameInput) gestorMemberNameInput.value = '';
+
+        await saveBookingData(dateKey);
+        openBookingModal(selectedBookingDay);
+        renderBookingCalendar(true);
+      }
+
+      if (btnGestorAddBooking) btnGestorAddBooking.onclick = addGestorBooking;
 
       if (btnBookingModalClose) btnBookingModalClose.onclick = closeBookingModal;
       if (btnToggleBooking) btnToggleBooking.onclick = toggleBooking;
