@@ -146,8 +146,15 @@
       font-weight: 600;
       text-transform: uppercase;
     }
+    .role-badge.admin { background-color: rgba(168, 85, 247, 0.25); color: #D8B4FE; border: 1px solid rgba(168, 85, 247, 0.6); }
     .role-badge.gestor { background-color: var(--bg-gol-orange); color: var(--gol-orange); border: 1px solid var(--border-gol-orange); }
-    .role-badge.colaborador { background-color: rgba(2, 132, 199, 0.2); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .role-badge.colaborador { background-color: rgba(100, 116, 139, 0.2); color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.3); }
+    
+    .status-user-badge {
+      font-family: var(--font-mono); font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600;
+    }
+    .status-user-badge.ativo { background-color: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .status-user-badge.inativo { background-color: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.4); }
 
     /* CABECALHO ESTILO GOL */
     .header-card {
@@ -643,8 +650,8 @@
         <div id="standaloneRoleGroup" class="form-group" style="display: none;">
           <label class="form-label" for="standaloneRole">Perfil de Acesso</label>
           <select id="standaloneRole" class="form-select">
-            <option value="colaborador">👤 Colaborador (Registrar presença individual)</option>
             <option value="gestor">👔 Gestor (Registrar e Monitorar Equipe)</option>
+            <option value="admin">👑 Administrador (Governança Geral e Histórico)</option>
           </select>
         </div>
 
@@ -936,26 +943,41 @@
       </section>
 
       <section class="team-table-card">
-        <h2 class="table-title">Frequência da Equipe no Mês Selecionado</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h2 class="table-title" style="margin-bottom: 4px;">Frequência e Gestão de Integrantes</h2>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Admins têm controle total sobre cargos, gestores e histórico de colaboradores.</span>
+          </div>
+          <div id="teamFilterContainer" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button id="btnFilterAll" type="button" class="btn btn-primary" style="font-size: 0.75rem; padding: 5px 10px;">🏢 Todos</button>
+            <button id="btnFilterGestores" type="button" class="btn" style="font-size: 0.75rem; padding: 5px 10px;">👔 Gestores</button>
+            <button id="btnFilterColaboradores" type="button" class="btn" style="font-size: 0.75rem; padding: 5px 10px;">👤 Colaboradores</button>
+            <button id="btnFilterInativos" type="button" class="btn" style="font-size: 0.75rem; padding: 5px 10px;">🔴 Inativos / Histórico</button>
+          </div>
+        </div>
+
         <table class="team-table">
           <thead>
             <tr>
-              <th>Colaborador</th>
+              <th>Integrante</th>
               <th>Função</th>
+              <th>Status</th>
               <th>🏢 Presencial %</th>
               <th>🏠 Home Office %</th>
               <th>❌ Falta %</th>
               <th>🌴 Folga %</th>
               <th>Registros</th>
-              <th>Ação</th>
+              <th>Ações de Gestão</th>
             </tr>
           </thead>
           <tbody id="teamTableBody">
             <tr>
-              <td colspan="8" style="text-align: center; color: var(--text-muted);">Carregando dados da equipe...</td>
+              <td colspan="9" style="text-align: center; color: var(--text-muted);">Carregando dados da equipe...</td>
             </tr>
           </tbody>
         </table>
+      </section>
+
     <!-- AREA DE DIMENSIONAMENTO E DISTRIBUIÇÃO DE SETORES & EQUIPES -->
     <div id="sectorsSection" class="sectors-container" style="display: none;">
       <!-- KPIS DE CAPACIDADE DOS SETORES -->
@@ -1178,8 +1200,8 @@
         <div id="roleGroup" class="form-group" style="display: none;">
           <label class="form-label" for="authRole">Perfil de Acesso</label>
           <select id="authRole" class="form-select">
-            <option value="colaborador">👤 Colaborador (Registrar presença individual)</option>
             <option value="gestor">👔 Gestor (Registrar e Monitorar Equipe)</option>
+            <option value="admin">👑 Administrador (Governança Geral e Histórico)</option>
           </select>
         </div>
 
@@ -1425,11 +1447,19 @@
                 }
               } catch (e) { console.error("Erro ao ler dados do usuário:", e); }
 
-              userRoleBadgeEl.textContent = userRole === 'gestor' ? 'Gestor' : 'Colaborador';
-              userRoleBadgeEl.className = `role-badge ${userRole}`;
+              if (userRole === 'admin') {
+                userRoleBadgeEl.textContent = '👑 Admin';
+                userRoleBadgeEl.className = 'role-badge admin';
+              } else if (userRole === 'gestor') {
+                userRoleBadgeEl.textContent = '👔 Gestor';
+                userRoleBadgeEl.className = 'role-badge gestor';
+              } else {
+                userRoleBadgeEl.textContent = '👤 Colaborador';
+                userRoleBadgeEl.className = 'role-badge colaborador';
+              }
               userRoleBadgeEl.style.display = 'inline';
 
-              if (userRole === 'gestor') {
+              if (userRole === 'gestor' || userRole === 'admin') {
                 if (tabTeamDashboard) tabTeamDashboard.style.display = 'inline-block';
               } else {
                 if (tabTeamDashboard) tabTeamDashboard.style.display = 'none';
@@ -1437,10 +1467,9 @@
 
             } else {
               currentUser = null;
-              userRole = 'colaborador';
+              userRole = 'gestor';
               userInfoEl.style.display = 'none';
               userRoleBadgeEl.style.display = 'none';
-              gestorTabContainer.style.display = 'none';
 
               // Alternar visões: Ocultar Agenda e Mostrar Tela de Login
               if (loginViewEl) loginViewEl.style.display = 'flex';
@@ -1632,18 +1661,47 @@
       // ==========================================================================
       // PAINEL DE GESTAO DA EQUIPE
       // ==========================================================================
-      async function renderTeamDashboard() {
-        if (!db || userRole !== 'gestor') return;
+      let teamFilterMode = 'all'; // 'all', 'gestores', 'colaboradores', 'inativos'
 
-        teamTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">Carregando equipe...</td></tr>`;
+      async function renderTeamDashboard() {
+        if (!db || (userRole !== 'gestor' && userRole !== 'admin')) return;
+
+        const isAdmin = (userRole === 'admin');
+
+        // Configurar escuta dos botões de filtro
+        const btnFilterAll = document.getElementById('btnFilterAll');
+        const btnFilterGestores = document.getElementById('btnFilterGestores');
+        const btnFilterColaboradores = document.getElementById('btnFilterColaboradores');
+        const btnFilterInativos = document.getElementById('btnFilterInativos');
+
+        const updateFilterBtnUI = () => {
+          [btnFilterAll, btnFilterGestores, btnFilterColaboradores, btnFilterInativos].forEach(btn => {
+            if (btn) btn.className = 'btn';
+          });
+          if (teamFilterMode === 'all' && btnFilterAll) btnFilterAll.className = 'btn btn-primary';
+          else if (teamFilterMode === 'gestores' && btnFilterGestores) btnFilterGestores.className = 'btn btn-primary';
+          else if (teamFilterMode === 'colaboradores' && btnFilterColaboradores) btnFilterColaboradores.className = 'btn btn-primary';
+          else if (teamFilterMode === 'inativos' && btnFilterInativos) btnFilterInativos.className = 'btn btn-primary';
+        };
+        updateFilterBtnUI();
+
+        if (btnFilterAll) btnFilterAll.onclick = () => { teamFilterMode = 'all'; renderTeamDashboard(); };
+        if (btnFilterGestores) btnFilterGestores.onclick = () => { teamFilterMode = 'gestores'; renderTeamDashboard(); };
+        if (btnFilterColaboradores) btnFilterColaboradores.onclick = () => { teamFilterMode = 'colaboradores'; renderTeamDashboard(); };
+        if (btnFilterInativos) btnFilterInativos.onclick = () => { teamFilterMode = 'inativos'; renderTeamDashboard(); };
+
+        teamTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">Carregando dados da equipe...</td></tr>`;
 
         try {
           const usersSnapshot = await db.collection('users').get();
-          const members = [];
+          let rawMembers = [];
           const monthKey = getMonthKey();
 
           for (let userDoc of usersSnapshot.docs) {
             const userData = userDoc.data();
+            const activeStatus = (userData.active !== false); // default true
+            const role = userData.role || 'colaborador';
+
             const attendanceDoc = await db.collection('attendance').doc(`${userDoc.id}_${monthKey}`).get();
             const days = attendanceDoc.exists ? (attendanceDoc.data().days || {}) : {};
 
@@ -1656,11 +1714,12 @@
             });
             const tot = p + h + f + fol;
 
-            members.push({
+            rawMembers.push({
               uid: userDoc.id,
               name: userData.name || userData.email,
               email: userData.email,
-              role: userData.role || 'colaborador',
+              role: role,
+              active: activeStatus,
               pPerc: tot > 0 ? Math.round((p / tot) * 100) : 0,
               hPerc: tot > 0 ? Math.round((h / tot) * 100) : 0,
               fPerc: tot > 0 ? Math.round((f / tot) * 100) : 0,
@@ -1670,30 +1729,71 @@
             });
           }
 
-          teamTotalMembersEl.textContent = members.length;
-          const avgPresence = members.length > 0 ? Math.round(members.reduce((acc, m) => acc + m.efetiva, 0) / members.length) : 0;
+          // Aplicar Filtro de Exibição
+          let filteredMembers = rawMembers.filter(m => {
+            if (teamFilterMode === 'gestores') return (m.role === 'gestor' || m.role === 'admin') && m.active;
+            if (teamFilterMode === 'colaboradores') return m.role === 'colaborador' && m.active;
+            if (teamFilterMode === 'inativos') return !m.active;
+            return true;
+          });
+
+          teamTotalMembersEl.textContent = filteredMembers.length;
+          const avgPresence = filteredMembers.length > 0 ? Math.round(filteredMembers.reduce((acc, m) => acc + m.efetiva, 0) / filteredMembers.length) : 0;
           teamGlobalPresenceEl.textContent = `${avgPresence}%`;
 
           teamTableBody.innerHTML = '';
-          members.forEach(m => {
+          if (filteredMembers.length === 0) {
+            teamTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 18px;">Nenhum integrante encontrado para este filtro.</td></tr>`;
+            return;
+          }
+
+          filteredMembers.forEach(m => {
             const tr = document.createElement('tr');
+
+            let roleBadgeHtml = '';
+            if (m.role === 'admin') roleBadgeHtml = `<span class="role-badge admin">👑 Admin</span>`;
+            else if (m.role === 'gestor') roleBadgeHtml = `<span class="role-badge gestor">👔 Gestor</span>`;
+            else roleBadgeHtml = `<span class="role-badge colaborador">👤 Colaborador</span>`;
+
+            let statusBadgeHtml = m.active 
+              ? `<span class="status-user-badge ativo">🟢 Ativo</span>`
+              : `<span class="status-user-badge inativo">🔴 Inativo</span>`;
+
+            let adminActionsHtml = '';
+            if (isAdmin) {
+              let nextRole = m.role === 'admin' ? 'gestor' : 'admin';
+              let roleBtnLabel = m.role === 'admin' ? '👔 Rebaixar a Gestor' : '👑 Promover a Admin';
+              let toggleStatusLabel = m.active ? '🔴 Inativar' : '🟢 Reativar';
+
+              adminActionsHtml = `
+                <button type="button" class="btn btn-change-role" data-uid="${m.uid}" data-nextrole="${nextRole}" style="font-size: 0.7rem; padding: 4px 8px;" title="Alterar perfil de acesso">${roleBtnLabel}</button>
+                <button type="button" class="btn btn-toggle-status" data-uid="${m.uid}" data-active="${m.active}" style="font-size: 0.7rem; padding: 4px 8px;" title="Ativar/Inativar conta">${toggleStatusLabel}</button>
+              `;
+            }
+
             tr.innerHTML = `
               <td>
                 <div class="member-info">
-                  <div class="member-avatar">${m.name.charAt(0).toUpperCase()}</div>
+                  <div class="member-avatar">${(m.name || 'U').charAt(0).toUpperCase()}</div>
                   <div>
-                    <strong style="display: block;">${m.name}</strong>
+                    <strong style="display: block; color: ${m.active ? '#FFFFFF' : 'var(--text-muted)'};">${m.name}${!m.active ? ' (Inativo)' : ''}</strong>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">${m.email}</span>
                   </div>
                 </div>
               </td>
-              <td><span class="role-badge ${m.role}">${m.role}</span></td>
+              <td>${roleBadgeHtml}</td>
+              <td>${statusBadgeHtml}</td>
               <td><strong style="color: var(--text-presencial);">${m.pPerc}%</strong></td>
               <td><strong style="color: var(--text-homeoffice);">${m.hPerc}%</strong></td>
               <td><strong style="color: var(--text-falta);">${m.fPerc}%</strong></td>
               <td><strong style="color: var(--text-folga);">${m.folPerc}%</strong></td>
               <td><span style="font-family: var(--font-mono);">${m.totDays} dias</span></td>
-              <td><button class="btn btn-inspect" data-uid="${m.uid}" data-name="${m.name}">👁️ Ver Agenda</button></td>
+              <td>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                  <button class="btn btn-inspect" data-uid="${m.uid}" data-name="${m.name}" style="font-size: 0.75rem; padding: 4px 8px;">👁️ Ver Agenda</button>
+                  ${adminActionsHtml}
+                </div>
+              </td>
             `;
             teamTableBody.appendChild(tr);
           });
@@ -1703,20 +1803,46 @@
               const uid = e.currentTarget.dataset.uid;
               const name = e.currentTarget.dataset.name;
               inspectModeUser = { uid, name };
-              activeTab = 'myCalendar';
-              tabMyCalendar.classList.add('active');
-              if (tabBookingCalendar) tabBookingCalendar.classList.remove('active');
-              if (tabTeamDashboard) tabTeamDashboard.classList.remove('active');
-              if (teamDashboardSection) teamDashboardSection.style.display = 'none';
-              if (bookingCalendarSection) bookingCalendarSection.style.display = 'none';
-              if (userCalendarSection) userCalendarSection.style.display = 'flex';
-              renderCalendar();
+              switchTab('myCalendar');
             });
           });
 
+          if (isAdmin) {
+            document.querySelectorAll('.btn-change-role').forEach(b => {
+              b.addEventListener('click', async (e) => {
+                const uid = e.currentTarget.dataset.uid;
+                const nextRole = e.currentTarget.dataset.nextrole;
+                if (confirm(`Deseja alterar a função deste usuário para "${nextRole.toUpperCase()}"?`)) {
+                  try {
+                    await db.collection('users').doc(uid).update({ role: nextRole });
+                    renderTeamDashboard();
+                  } catch (err) {
+                    alert("Erro ao atualizar função: " + err.message);
+                  }
+                }
+              });
+            });
+
+            document.querySelectorAll('.btn-toggle-status').forEach(b => {
+              b.addEventListener('click', async (e) => {
+                const uid = e.currentTarget.dataset.uid;
+                const currentActive = e.currentTarget.dataset.active === 'true';
+                const newActive = !currentActive;
+                if (confirm(`Deseja ${newActive ? 'REATIVAR' : 'INATIVAR'} a conta deste integrante?`)) {
+                  try {
+                    await db.collection('users').doc(uid).update({ active: newActive });
+                    renderTeamDashboard();
+                  } catch (err) {
+                    alert("Erro ao atualizar status: " + err.message);
+                  }
+                }
+              });
+            });
+          }
+
         } catch (e) {
           console.error("Erro carregando equipe:", e);
-          teamTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-falta);">Erro ao carregar dados da equipe.</td></tr>`;
+          teamTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--color-falta);">Erro ao carregar dados dos integrantes.</td></tr>`;
         }
       }
 
@@ -1824,10 +1950,19 @@
               });
 
               userRole = role;
-              userRoleBadgeEl.textContent = userRole === 'gestor' ? 'Gestor' : 'Colaborador';
-              userRoleBadgeEl.className = `role-badge ${userRole}`;
+              if (userRole === 'admin') {
+                userRoleBadgeEl.textContent = '👑 Admin';
+                userRoleBadgeEl.className = 'role-badge admin';
+              } else if (userRole === 'gestor') {
+                userRoleBadgeEl.textContent = '👔 Gestor';
+                userRoleBadgeEl.className = 'role-badge gestor';
+              } else {
+                userRoleBadgeEl.textContent = '👤 Colaborador';
+                userRoleBadgeEl.className = 'role-badge colaborador';
+              }
               userRoleBadgeEl.style.display = 'inline';
-              if (userRole === 'gestor') {
+
+              if (userRole === 'gestor' || userRole === 'admin') {
                 if (tabTeamDashboard) tabTeamDashboard.style.display = 'inline-block';
               } else {
                 if (tabTeamDashboard) tabTeamDashboard.style.display = 'none';
@@ -2415,7 +2550,7 @@
         if (gestorVagasRestantesEl) gestorVagasRestantesEl.textContent = `${freeSpots} vagas livres`;
 
         if (gestorBookingPanel) {
-          if (userRole === 'gestor') {
+          if (userRole === 'gestor' || userRole === 'admin') {
             gestorBookingPanel.style.display = 'flex';
           } else {
             gestorBookingPanel.style.display = 'none';
@@ -2469,7 +2604,7 @@
               div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--bg-card-day); border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.85rem;';
               
               let deleteBtnHtml = '';
-              if (userRole === 'gestor') {
+              if (userRole === 'gestor' || userRole === 'admin') {
                 deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover este agendamento">🗑️ Excluir</button>`;
               }
 
@@ -2665,7 +2800,7 @@
       function renderSectorsSection() {
         loadSectorsData();
 
-        const isGestor = (userRole === 'gestor');
+        const isGestor = (userRole === 'gestor' || userRole === 'admin');
 
         const gestorSectorNoticeEl = document.getElementById('gestorSectorNotice');
         const btnResetSectors = document.getElementById('btnResetSectors');
