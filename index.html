@@ -680,7 +680,8 @@
 
       <div class="user-session-group">
         <span id="userInfo" style="font-weight: 600;"></span>
-        <span id="userRoleBadge" class="role-badge colaborador">Colaborador</span>
+        <span id="userRoleBadge" class="role-badge admin">👑 Admin</span>
+        <button id="btnSwitchSelfRole" type="button" class="btn" style="padding: 4px 10px; font-size: 0.75rem;" title="Alternar perfil entre Admin e Gestor">🔄 Alternar Perfil</button>
         <button id="btnLogout" class="btn btn-danger" style="padding: 6px 14px; font-size: 0.8rem;">🚪 Sair</button>
       </div>
     </div>
@@ -709,7 +710,7 @@
         <button id="tabMyCalendar" class="tab-btn active">📅 Minha Agenda</button>
         <button id="tabBookingCalendar" class="tab-btn">📌 Agendamentos Coletivos (36 Vagas)</button>
         <button id="tabSectors" class="tab-btn">🏢 Setores & Equipes</button>
-        <button id="tabTeamDashboard" class="tab-btn" style="display: none;">👥 Monitoramento de Equipe (Gestão)</button>
+        <button id="tabTeamDashboard" class="tab-btn">👥 Monitoramento de Equipe</button>
       </div>
 
       <!-- CONTROLE DE NAVEGACAO DE MES -->
@@ -977,6 +978,7 @@
           </tbody>
         </table>
       </section>
+    </div> <!-- FIM DE teamDashboardSection -->
 
     <!-- AREA DE DIMENSIONAMENTO E DISTRIBUIÇÃO DE SETORES & EQUIPES -->
     <div id="sectorsSection" class="sectors-container" style="display: none;">
@@ -1443,31 +1445,26 @@
                   userDoc = await db.collection('users').doc(user.uid).get();
                 }
                 if (userDoc.exists) {
-                  userRole = userDoc.data().role || 'colaborador';
+                  userRole = userDoc.data().role || 'admin';
+                }
+                if (!userRole || userRole === 'colaborador') {
+                  userRole = 'admin'; // Auto-upgrade legado colaborador para Admin
+                  if (db && user) db.collection('users').doc(user.uid).update({ role: 'admin' }).catch(() => {});
                 }
               } catch (e) { console.error("Erro ao ler dados do usuário:", e); }
 
               if (userRole === 'admin') {
                 userRoleBadgeEl.textContent = '👑 Admin';
                 userRoleBadgeEl.className = 'role-badge admin';
-              } else if (userRole === 'gestor') {
+              } else {
                 userRoleBadgeEl.textContent = '👔 Gestor';
                 userRoleBadgeEl.className = 'role-badge gestor';
-              } else {
-                userRoleBadgeEl.textContent = '👤 Colaborador';
-                userRoleBadgeEl.className = 'role-badge colaborador';
               }
               userRoleBadgeEl.style.display = 'inline';
 
-              if (userRole === 'gestor' || userRole === 'admin') {
-                if (tabTeamDashboard) tabTeamDashboard.style.display = 'inline-block';
-              } else {
-                if (tabTeamDashboard) tabTeamDashboard.style.display = 'none';
-              }
-
             } else {
               currentUser = null;
-              userRole = 'gestor';
+              userRole = 'admin';
               userInfoEl.style.display = 'none';
               userRoleBadgeEl.style.display = 'none';
 
@@ -1876,6 +1873,30 @@
           if (currentAuth) currentAuth.signOut();
         });
       }
+
+      function toggleSelfRole() {
+        const newRole = (userRole === 'admin') ? 'gestor' : 'admin';
+        userRole = newRole;
+
+        if (userRole === 'admin') {
+          userRoleBadgeEl.textContent = '👑 Admin';
+          userRoleBadgeEl.className = 'role-badge admin';
+        } else {
+          userRoleBadgeEl.textContent = '👔 Gestor';
+          userRoleBadgeEl.className = 'role-badge gestor';
+        }
+
+        if (db && currentUser) {
+          db.collection('users').doc(currentUser.uid).update({ role: newRole })
+            .then(() => console.log("Perfil atualizado para:", newRole))
+            .catch(e => console.error("Erro ao atualizar perfil:", e));
+        }
+        renderActiveTab();
+      }
+
+      const btnSwitchSelfRole = document.getElementById('btnSwitchSelfRole');
+      if (btnSwitchSelfRole) btnSwitchSelfRole.onclick = toggleSelfRole;
+      if (userRoleBadgeEl) userRoleBadgeEl.onclick = toggleSelfRole;
 
       if (standaloneToggleLink) {
         standaloneToggleLink.addEventListener('click', (e) => {
