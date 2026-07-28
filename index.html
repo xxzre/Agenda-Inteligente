@@ -414,6 +414,84 @@
       padding: 20px; box-shadow: var(--shadow-md); overflow-x: auto;
     }
 
+    /* GRID DE SETORES E EQUIPES (LAYOUT EM 3 COLUNAS) */
+    .sectors-container { display: flex; flex-direction: column; gap: 20px; }
+    .sectors-columns-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .sectors-columns-grid { grid-template-columns: 1fr; }
+    }
+    .sector-col-group {
+      display: flex; flex-direction: column; gap: 12px;
+      background: rgba(22, 30, 46, 0.4);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .sector-col-title {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gol-orange);
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-card);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sector-card {
+      background: var(--bg-card-day);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 8px;
+      transition: var(--transition-fast);
+      position: relative;
+    }
+    .sector-card:hover {
+      border-color: var(--border-card-hover);
+      box-shadow: var(--shadow-sm);
+    }
+    .sector-card-header {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .sector-name {
+      font-size: 0.875rem; font-weight: 700; color: #FFFFFF; letter-spacing: 0.3px;
+    }
+    .sector-count-badge {
+      font-family: var(--font-mono);
+      font-size: 0.8rem; font-weight: 700;
+      color: var(--gol-orange); background: var(--bg-gol-orange);
+      border: 1px solid var(--border-gol-orange);
+      padding: 3px 8px; border-radius: var(--radius-sm);
+      white-space: nowrap;
+    }
+    .sector-supervisor-tag {
+      font-size: 0.725rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px;
+    }
+    .sector-controls {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px;
+      padding-top: 8px; border-top: 1px dashed var(--border-card);
+    }
+    .sector-control-group {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .btn-qty {
+      width: 26px; height: 26px; border-radius: 4px; border: 1px solid var(--border-card);
+      background: var(--bg-card); color: #FFFFFF; font-weight: 700; font-size: 0.85rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: var(--transition-fast);
+    }
+    .btn-qty:hover { background: var(--gol-orange); border-color: var(--gol-orange); color: #000; }
+    .input-qty {
+      width: 44px; text-align: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem;
+      background: var(--bg-card); border: 1px solid var(--border-card); color: #FFF; border-radius: 4px; padding: 2px 4px;
+    }
+
     .table-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: #FFFFFF; margin-bottom: 16px; }
     .team-table { width: 100%; border-collapse: collapse; text-align: left; }
     .team-table th { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); padding: 10px 12px; border-bottom: 2px solid var(--border-card); }
@@ -623,6 +701,7 @@
       <div id="mainTabContainer" class="view-switcher-bar">
         <button id="tabMyCalendar" class="tab-btn active">📅 Minha Agenda</button>
         <button id="tabBookingCalendar" class="tab-btn">📌 Agendamentos Coletivos (36 Vagas)</button>
+        <button id="tabSectors" class="tab-btn">🏢 Setores & Equipes</button>
         <button id="tabTeamDashboard" class="tab-btn" style="display: none;">👥 Monitoramento de Equipe (Gestão)</button>
       </div>
 
@@ -877,6 +956,88 @@
             </tr>
           </tbody>
         </table>
+    <!-- AREA DE DIMENSIONAMENTO E DISTRIBUIÇÃO DE SETORES & EQUIPES -->
+    <div id="sectorsSection" class="sectors-container" style="display: none;">
+      <!-- KPIS DE CAPACIDADE DOS SETORES -->
+      <section class="summary-grid">
+        <div class="kpi-card total">
+          <div class="kpi-header">
+            <span class="kpi-label">Capacidade Total da Operação</span>
+            <span>🏢</span>
+          </div>
+          <div class="kpi-value-group">
+            <span id="sectorsTotalCount" class="kpi-value">0</span>
+            <span class="kpi-percentage">colaboradores alocados</span>
+          </div>
+        </div>
+
+        <div class="kpi-card homeoffice">
+          <div class="kpi-header">
+            <span class="kpi-label">Total de Setores / Equipes</span>
+            <span>📊</span>
+          </div>
+          <div class="kpi-value-group">
+            <span id="sectorsGroupCount" class="kpi-value">15</span>
+            <span class="kpi-percentage">áreas ativas</span>
+          </div>
+        </div>
+
+        <div class="kpi-card presencial">
+          <div class="kpi-header">
+            <span class="kpi-label">Média por Setor</span>
+            <span>👥</span>
+          </div>
+          <div class="kpi-value-group">
+            <span id="sectorsAverageCount" class="kpi-value">0</span>
+            <span class="kpi-percentage">pessoas / setor</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAINEL DE AVISO E CONTROLE DO GESTOR -->
+      <section class="team-table-card" style="padding: 16px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: #FFFFFF; font-weight: 600;">🏢 Dimensionamento de Setores e Alocação de Equipes</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Visualização da capacidade por área. Gestores podem editar a quantidade de colaboradores.</span>
+          </div>
+          <div id="gestorSectorsControl" style="display: flex; gap: 8px; align-items: center;">
+            <button id="btnResetSectors" type="button" class="btn" style="display: none; font-size: 0.8rem; padding: 6px 12px;">↺ Restaurar Padrão</button>
+            <span id="gestorSectorNotice" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gol-orange); background: var(--bg-gol-orange); border: 1px solid var(--border-gol-orange); padding: 5px 12px; border-radius: 4px;">
+              👁️ Visão Geral (Modo Leitura)
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRID EM 3 COLUNAS CONFORME LAYOUT SOLICITADO -->
+      <section class="sectors-columns-grid">
+        <!-- COLUNA 1: OPERAÇÃO / ATENDIMENTO -->
+        <div class="sector-col-group">
+          <div class="sector-col-title">
+            <span>📢 Operação & Atendimento</span>
+            <span id="col1TotalBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 PAs)</span>
+          </div>
+          <div id="sectorCol1" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <!-- COLUNA 2: GESTÃO & SUPORTE -->
+        <div class="sector-col-group">
+          <div class="sector-col-title">
+            <span>⚖️ Gestão & Suporte</span>
+            <span id="col2TotalBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 PAs)</span>
+          </div>
+          <div id="sectorCol2" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <!-- COLUNA 3: ESPECIALIZADOS & PLANEJAMENTO -->
+        <div class="sector-col-group">
+          <div class="sector-col-title">
+            <span>🎯 Especializados & Planejamento</span>
+            <span id="col3TotalBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 PAs)</span>
+          </div>
+          <div id="sectorCol3" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
       </section>
     </div>
 
@@ -1138,9 +1299,11 @@
       const mainTabContainer = document.getElementById('mainTabContainer');
       const tabMyCalendar = document.getElementById('tabMyCalendar');
       const tabBookingCalendar = document.getElementById('tabBookingCalendar');
+      const tabSectors = document.getElementById('tabSectors');
       const tabTeamDashboard = document.getElementById('tabTeamDashboard');
       const userCalendarSection = document.getElementById('userCalendarSection');
       const bookingCalendarSection = document.getElementById('bookingCalendarSection');
+      const sectorsSection = document.getElementById('sectorsSection');
       const teamDashboardSection = document.getElementById('teamDashboardSection');
       const teamTableBody = document.getElementById('teamTableBody');
       const teamTotalMembersEl = document.getElementById('teamTotalMembers');
@@ -1680,44 +1843,57 @@
       }
 
 
+      function switchTab(tabName) {
+        activeTab = tabName;
+
+        if (tabMyCalendar) tabMyCalendar.classList.toggle('active', tabName === 'myCalendar');
+        if (tabBookingCalendar) tabBookingCalendar.classList.toggle('active', tabName === 'bookingCalendar');
+        if (tabSectors) tabSectors.classList.toggle('active', tabName === 'sectors');
+        if (tabTeamDashboard) tabTeamDashboard.classList.toggle('active', tabName === 'teamDashboard');
+
+        if (userCalendarSection) userCalendarSection.style.display = 'none';
+        if (bookingCalendarSection) bookingCalendarSection.style.display = 'none';
+        if (sectorsSection) sectorsSection.style.display = 'none';
+        if (teamDashboardSection) teamDashboardSection.style.display = 'none';
+
+        if (tabName === 'myCalendar') {
+          if (userCalendarSection) userCalendarSection.style.display = 'flex';
+          renderCalendar();
+        } else if (tabName === 'bookingCalendar') {
+          if (bookingCalendarSection) bookingCalendarSection.style.display = 'flex';
+          renderBookingCalendar();
+        } else if (tabName === 'sectors') {
+          if (sectorsSection) sectorsSection.style.display = 'flex';
+          renderSectorsSection();
+        } else if (tabName === 'teamDashboard') {
+          if (teamDashboardSection) teamDashboardSection.style.display = 'flex';
+          renderTeamDashboard();
+        }
+      }
+
       if (tabMyCalendar) {
         tabMyCalendar.addEventListener('click', () => {
           inspectModeUser = null;
-          activeTab = 'myCalendar';
-          tabMyCalendar.classList.add('active');
-          if (tabBookingCalendar) tabBookingCalendar.classList.remove('active');
-          if (tabTeamDashboard) tabTeamDashboard.classList.remove('active');
-          if (teamDashboardSection) teamDashboardSection.style.display = 'none';
-          if (bookingCalendarSection) bookingCalendarSection.style.display = 'none';
-          if (userCalendarSection) userCalendarSection.style.display = 'flex';
-          renderCalendar();
+          switchTab('myCalendar');
         });
       }
 
       if (tabBookingCalendar) {
         tabBookingCalendar.addEventListener('click', () => {
           inspectModeUser = null;
-          activeTab = 'bookingCalendar';
-          tabBookingCalendar.classList.add('active');
-          if (tabMyCalendar) tabMyCalendar.classList.remove('active');
-          if (tabTeamDashboard) tabTeamDashboard.classList.remove('active');
-          if (userCalendarSection) userCalendarSection.style.display = 'none';
-          if (teamDashboardSection) teamDashboardSection.style.display = 'none';
-          if (bookingCalendarSection) bookingCalendarSection.style.display = 'flex';
-          renderBookingCalendar();
+          switchTab('bookingCalendar');
+        });
+      }
+
+      if (tabSectors) {
+        tabSectors.addEventListener('click', () => {
+          switchTab('sectors');
         });
       }
 
       if (tabTeamDashboard) {
         tabTeamDashboard.addEventListener('click', () => {
-          activeTab = 'teamDashboard';
-          tabTeamDashboard.classList.add('active');
-          if (tabMyCalendar) tabMyCalendar.classList.remove('active');
-          if (tabBookingCalendar) tabBookingCalendar.classList.remove('active');
-          if (userCalendarSection) userCalendarSection.style.display = 'none';
-          if (bookingCalendarSection) bookingCalendarSection.style.display = 'none';
-          if (teamDashboardSection) teamDashboardSection.style.display = 'flex';
-          renderTeamDashboard();
+          switchTab('teamDashboard');
         });
       }
 
@@ -2431,9 +2607,241 @@
         };
       }
 
+      // ==========================================================================
+      // LÓGICA DE DIMENSIONAMENTO E ALOCAÇÃO DE SETORES & EQUIPES
+      // ==========================================================================
+      const DEFAULT_SECTORS_DATA = [
+        // Coluna 1: Operação & Atendimento
+        { id: 'magno', name: 'MAGNO', col: 1, count: 7, supervisors: 0 },
+        { id: 'canais_1', name: 'CANAIS (Grupo 1)', col: 1, count: 12, supervisors: 0 },
+        { id: 'canais_2', name: 'CANAIS (Grupo 2)', col: 1, count: 14, supervisors: 0 },
+        { id: 'canais_3', name: 'CANAIS (Grupo 3)', col: 1, count: 14, supervisors: 0 },
+        { id: 'smiles_1', name: 'SMILES (Operação 1)', col: 1, count: 11, supervisors: 1 },
+        { id: 'smiles_2', name: 'SMILES (Operação 2)', col: 1, count: 10, supervisors: 0 },
+        { id: 'smiles_3', name: 'SMILES (Operação 3)', col: 1, count: 9, supervisors: 2 },
+        { id: 'smiles_4', name: 'SMILES (Operação 4)', col: 1, count: 8, supervisors: 2 },
+
+        // Coluna 2: Gestão & Suporte
+        { id: 'qualidade', name: 'QUALIDADE', col: 2, count: 8, supervisors: 0 },
+        { id: 'analista_admin', name: 'ANALISTA E ADMIN', col: 2, count: 10, supervisors: 0 },
+        { id: 'coordenacao', name: 'COORDENAÇÃO', col: 2, count: 6, supervisors: 0 },
+
+        // Coluna 3: Especializados & Planejamento
+        { id: 'acomodacao', name: 'ACOMODAÇÃO', col: 3, count: 10, supervisors: 0 },
+        { id: 'analista', name: 'ANALISTA', col: 3, count: 10, supervisors: 0 },
+        { id: 'b2b', name: 'B2B', col: 3, count: 10, supervisors: 0 },
+        { id: 'planejamento', name: 'PLANEJAMENTO', col: 3, count: 8, supervisors: 0 }
+      ];
+
+      let sectorsData = [];
+
+      function loadSectorsData() {
+        const stored = localStorage.getItem('sectors_headcount_v2');
+        if (stored) {
+          try {
+            sectorsData = JSON.parse(stored);
+          } catch(e) {
+            sectorsData = JSON.parse(JSON.stringify(DEFAULT_SECTORS_DATA));
+          }
+        } else {
+          sectorsData = JSON.parse(JSON.stringify(DEFAULT_SECTORS_DATA));
+        }
+      }
+
+      function saveSectorsData() {
+        localStorage.setItem('sectors_headcount_v2', JSON.stringify(sectorsData));
+        if (firebaseOnline && db) {
+          try {
+            db.collection('settings').doc('sectors').set({
+              sectors: sectorsData,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+          } catch(e) {
+            console.error("Erro ao salvar setores no Firestore:", e);
+          }
+        }
+      }
+
+      function renderSectorsSection() {
+        loadSectorsData();
+
+        const isGestor = (userRole === 'gestor');
+
+        const gestorSectorNoticeEl = document.getElementById('gestorSectorNotice');
+        const btnResetSectors = document.getElementById('btnResetSectors');
+
+        if (gestorSectorNoticeEl) {
+          if (isGestor) {
+            gestorSectorNoticeEl.innerHTML = '⚙️ Modo Gestor Ativo: Altere as quantidades com + e -';
+            gestorSectorNoticeEl.style.borderColor = 'var(--border-gol-orange)';
+            gestorSectorNoticeEl.style.color = 'var(--gol-orange)';
+          } else {
+            gestorSectorNoticeEl.innerHTML = '👁️ Visão Geral (Modo Leitura)';
+            gestorSectorNoticeEl.style.borderColor = 'var(--border-card)';
+            gestorSectorNoticeEl.style.color = 'var(--text-muted)';
+          }
+        }
+
+        if (btnResetSectors) {
+          btnResetSectors.style.display = isGestor ? 'inline-block' : 'none';
+          btnResetSectors.onclick = () => {
+            if (confirm("Deseja restaurar as quantidades originais de todos os setores?")) {
+              sectorsData = JSON.parse(JSON.stringify(DEFAULT_SECTORS_DATA));
+              saveSectorsData();
+              renderSectorsSection();
+            }
+          };
+        }
+
+        const col1El = document.getElementById('sectorCol1');
+        const col2El = document.getElementById('sectorCol2');
+        const col3El = document.getElementById('sectorCol3');
+
+        if (col1El) col1El.innerHTML = '';
+        if (col2El) col2El.innerHTML = '';
+        if (col3El) col3El.innerHTML = '';
+
+        let totalHeadcount = 0;
+        let col1Total = 0, col2Total = 0, col3Total = 0;
+
+        sectorsData.forEach(item => {
+          const itemTotal = item.count + (item.supervisors || 0);
+          totalHeadcount += itemTotal;
+
+          if (item.col === 1) col1Total += itemTotal;
+          else if (item.col === 2) col2Total += itemTotal;
+          else if (item.col === 3) col3Total += itemTotal;
+
+          const card = document.createElement('div');
+          card.className = 'sector-card';
+
+          let supTag = '';
+          if (item.supervisors > 0) {
+            supTag = `<span class="sector-supervisor-tag">👔 ${item.supervisors} Supervisor${item.supervisors > 1 ? 'es' : ''}</span>`;
+          }
+
+          let controlsHtml = '';
+          if (isGestor) {
+            controlsHtml = `
+              <div class="sector-controls">
+                <div class="sector-control-group">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); margin-right: 4px;">Pessoas:</span>
+                  <button type="button" class="btn-qty btn-dec-person" data-id="${item.id}">-</button>
+                  <input type="number" class="input-qty input-person-qty" data-id="${item.id}" value="${item.count}" min="0" max="99" />
+                  <button type="button" class="btn-qty btn-inc-person" data-id="${item.id}">+</button>
+                </div>
+                <div class="sector-control-group">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); margin-right: 2px;">👔 Sup:</span>
+                  <button type="button" class="btn-qty btn-dec-sup" data-id="${item.id}">-</button>
+                  <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; width: 18px; text-align: center;">${item.supervisors || 0}</span>
+                  <button type="button" class="btn-qty btn-inc-sup" data-id="${item.id}">+</button>
+                </div>
+              </div>
+            `;
+          }
+
+          let countLabel = `${item.count} PESSOAS`;
+          if (item.supervisors > 0) {
+            countLabel = `${item.count} E ${item.supervisors} SUP.`;
+          }
+
+          card.innerHTML = `
+            <div class="sector-card-header">
+              <span class="sector-name">${item.name}</span>
+              <span class="sector-count-badge">${countLabel}</span>
+            </div>
+            ${supTag}
+            ${controlsHtml}
+          `;
+
+          if (item.col === 1 && col1El) col1El.appendChild(card);
+          else if (item.col === 2 && col2El) col2El.appendChild(card);
+          else if (item.col === 3 && col3El) col3El.appendChild(card);
+        });
+
+        // Update KPIs
+        const totalEl = document.getElementById('sectorsTotalCount');
+        const avgEl = document.getElementById('sectorsAverageCount');
+        const col1Badge = document.getElementById('col1TotalBadge');
+        const col2Badge = document.getElementById('col2TotalBadge');
+        const col3Badge = document.getElementById('col3TotalBadge');
+
+        if (totalEl) totalEl.textContent = totalHeadcount;
+        if (avgEl) avgEl.textContent = sectorsData.length > 0 ? (totalHeadcount / sectorsData.length).toFixed(1) : 0;
+        if (col1Badge) col1Badge.textContent = `(${col1Total} PAs)`;
+        if (col2Badge) col2Badge.textContent = `(${col2Total} PAs)`;
+        if (col3Badge) col3Badge.textContent = `(${col3Total} PAs)`;
+
+        // Event listeners for Gestor controls
+        if (isGestor) {
+          document.querySelectorAll('.btn-dec-person').forEach(btn => {
+            btn.onclick = () => {
+              const id = btn.dataset.id;
+              const sector = sectorsData.find(s => s.id === id);
+              if (sector && sector.count > 0) {
+                sector.count--;
+                saveSectorsData();
+                renderSectorsSection();
+              }
+            };
+          });
+
+          document.querySelectorAll('.btn-inc-person').forEach(btn => {
+            btn.onclick = () => {
+              const id = btn.dataset.id;
+              const sector = sectorsData.find(s => s.id === id);
+              if (sector) {
+                sector.count++;
+                saveSectorsData();
+                renderSectorsSection();
+              }
+            };
+          });
+
+          document.querySelectorAll('.input-person-qty').forEach(input => {
+            input.onchange = () => {
+              const id = input.dataset.id;
+              const sector = sectorsData.find(s => s.id === id);
+              const val = parseInt(input.value);
+              if (sector && !isNaN(val) && val >= 0) {
+                sector.count = val;
+                saveSectorsData();
+                renderSectorsSection();
+              }
+            };
+          });
+
+          document.querySelectorAll('.btn-dec-sup').forEach(btn => {
+            btn.onclick = () => {
+              const id = btn.dataset.id;
+              const sector = sectorsData.find(s => s.id === id);
+              if (sector && sector.supervisors > 0) {
+                sector.supervisors--;
+                saveSectorsData();
+                renderSectorsSection();
+              }
+            };
+          });
+
+          document.querySelectorAll('.btn-inc-sup').forEach(btn => {
+            btn.onclick = () => {
+              const id = btn.dataset.id;
+              const sector = sectorsData.find(s => s.id === id);
+              if (sector) {
+                sector.supervisors = (sector.supervisors || 0) + 1;
+                saveSectorsData();
+                renderSectorsSection();
+              }
+            };
+          });
+        }
+      }
+
       function renderActiveTab() {
         if (activeTab === 'bookingCalendar') {
           renderBookingCalendar();
+        } else if (activeTab === 'sectors') {
+          renderSectorsSection();
         } else if (activeTab === 'teamDashboard') {
           renderTeamDashboard();
         } else {
