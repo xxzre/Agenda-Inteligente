@@ -421,74 +421,42 @@
       padding: 20px; box-shadow: var(--shadow-md); overflow-x: auto;
     }
 
-    /* PLANTA BAIXA / DESENHO DE BAIAS E FILEIRAS DA OPERAÇÃO */
+    /* PLANTA DE FILEIRAS DA OPERAÇÃO (ESTRUTURA LIMPA INTEGRADA AO TEMA) */
     .sectors-container { display: flex; flex-direction: column; gap: 20px; }
     
-    .blueprint-canvas-board {
-      background-color: #070A10;
-      background-image: 
-        linear-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
-      background-size: 20px 20px;
-      border: 3px solid #10B981;
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: 0 0 30px rgba(16, 185, 129, 0.2), inset 0 0 15px rgba(16, 185, 129, 0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      position: relative;
-    }
-
-    .blueprint-header-title {
-      font-family: var(--font-mono);
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #34D399;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .fileiras-blueprint-grid {
+    .fileiras-clean-grid {
       display: grid;
       grid-template-columns: 1.4fr 1fr 1fr;
-      gap: 20px;
+      gap: 18px;
       align-items: stretch;
     }
     @media (max-width: 1000px) {
-      .fileiras-blueprint-grid { grid-template-columns: 1fr; }
+      .fileiras-clean-grid { grid-template-columns: 1fr; }
     }
 
-    .blueprint-fileira-block {
-      border: 2px solid #10B981;
-      border-radius: 8px;
-      background: rgba(11, 15, 23, 0.85);
-      backdrop-filter: blur(8px);
-      padding: 14px;
+    .fileira-clean-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      position: relative;
+      box-shadow: var(--shadow-md);
     }
 
-    .blueprint-fileira-title {
+    .fileira-card-header {
       font-family: var(--font-mono);
       font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
+      font-weight: 700;
       text-transform: uppercase;
-      color: #34D399;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      padding: 8px 12px;
-      border-radius: 4px;
+      letter-spacing: 0.5px;
+      color: var(--gol-orange);
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-card);
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
 
     .desk-units-subgrid {
@@ -506,41 +474,34 @@
       .desk-subgrid-2cols { grid-template-columns: 1fr; }
     }
 
-    .desk-sketch-unit {
-      background: #0D131F;
-      border: 2px solid #1E293B;
-      border-left: 4px solid #06B6D4;
-      border-radius: 6px;
-      padding: 10px 12px;
+    .desk-clean-unit {
+      background: var(--bg-card-day);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      transition: all 0.2s ease;
-      position: relative;
+      transition: var(--transition-fast);
     }
-    .desk-sketch-unit:hover {
-      border-color: #10B981;
-      border-left-color: #38BDF8;
-      background: #162032;
-      box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+    .desk-clean-unit:hover {
+      border-color: var(--border-card-hover);
+      box-shadow: var(--shadow-sm);
     }
 
     .desk-unit-label {
-      font-family: var(--font-sans);
-      font-size: 0.825rem;
-      font-weight: 800;
+      font-size: 0.875rem;
+      font-weight: 700;
       color: #FFFFFF;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.3px;
       text-transform: uppercase;
-      line-height: 1.2;
     }
 
     .desk-unit-subtext {
       font-family: var(--font-mono);
-      font-size: 0.725rem;
-      color: #38BDF8;
-      font-weight: 600;
+      font-size: 0.75rem;
+      color: var(--text-muted);
       margin-top: 2px;
       display: flex;
       align-items: center;
@@ -549,13 +510,13 @@
 
     .desk-unit-badge {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: #34D399;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gol-orange);
+      background: var(--bg-gol-orange);
+      border: 1px solid var(--border-gol-orange);
       padding: 3px 8px;
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
       white-space: nowrap;
     }
 
@@ -563,25 +524,6 @@
       display: flex;
       align-items: center;
       gap: 4px;
-    }
-    .btn-quick-qty {
-      width: 22px;
-      height: 22px;
-      border-radius: 3px;
-      border: 1px solid #334155;
-      background: #1E293B;
-      color: #FFF;
-      font-weight: 800;
-      font-size: 0.75rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .btn-quick-qty:hover {
-      background: #10B981;
-      color: #000;
-      border-color: #10B981;
     }
 
     .table-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: #FFFFFF; margin-bottom: 16px; }
@@ -1103,51 +1045,49 @@
         </div>
       </section>
 
-      <!-- DESENHO ARQUITETÔNICO DA PLANTA DE FILEIRAS (BLUEPRINT) -->
-      <section class="blueprint-canvas-board">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #10B981; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+      <!-- PAINEL DE CONTROLE DE SETORES & EQUIPES -->
+      <section class="team-table-card" style="padding: 16px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h3 class="blueprint-header-title">
-              <span>📐 PLANTA BAIXA &bull; MAPA DE FILEIRAS DA OPERAÇÃO</span>
-            </h3>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">Desenho esquemático das baias e mesas de atendimento.</span>
+            <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: #FFFFFF; font-weight: 600;">🏢 Dimensionamento de Setores e Fileiras da Operação</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Alocação física de baias por fileiras. Gestores podem editar a quantidade de colaboradores.</span>
           </div>
           <div id="gestorSectorsControl" style="display: flex; gap: 8px; align-items: center;">
             <button id="btnResetSectors" type="button" class="btn" style="display: none; font-size: 0.8rem; padding: 6px 12px;">↺ Restaurar Padrão</button>
-            <span id="gestorSectorNotice" style="font-family: var(--font-mono); font-size: 0.75rem; color: #34D399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); padding: 5px 12px; border-radius: 4px;">
+            <span id="gestorSectorNotice" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gol-orange); background: var(--bg-gol-orange); border: 1px solid var(--border-gol-orange); padding: 5px 12px; border-radius: 4px;">
               👁️ Visão Geral (Modo Leitura)
             </span>
           </div>
         </div>
+      </section>
 
-        <!-- MALHA DAS FILEIRAS ARQUITETÔNICAS (3 BLOCOS ALINHADOS) -->
-        <div class="fileiras-blueprint-grid">
-          <!-- FILEIRA 1: OPERAÇÃO (8 BAIAS EM SUBGRID 2x4) -->
-          <div class="blueprint-fileira-block">
-            <div class="blueprint-fileira-title">
-              <span>📍 FILEIRA 1 &bull; OPERAÇÃO & SMILES</span>
-              <span id="col1TotalBadge" style="color: #34D399; font-size: 0.75rem;">(0 PAs)</span>
-            </div>
-            <div id="sectorCol1" class="desk-units-subgrid desk-subgrid-2cols"></div>
+      <!-- GRID DE FILEIRAS (3 BLOCOS ALINHADOS E LIMPOS) -->
+      <section class="fileiras-clean-grid">
+        <!-- FILEIRA 1: OPERAÇÃO (8 BAIAS EM SUBGRID 2x4) -->
+        <div class="fileira-clean-card">
+          <div class="fileira-card-header">
+            <span>📍 FILEIRA 1 (OPERAÇÃO & SMILES)</span>
+            <span id="col1TotalBadge" style="color: var(--gol-orange); font-size: 0.75rem;">(0 PAs)</span>
           </div>
+          <div id="sectorCol1" class="desk-units-subgrid desk-subgrid-2cols"></div>
+        </div>
 
-          <!-- FILEIRA 2: GESTÃO & SUPORTE (3 BAIAS EM 1 COLUNA) -->
-          <div class="blueprint-fileira-block">
-            <div class="blueprint-fileira-title">
-              <span>📍 FILEIRA 2 &bull; GESTÃO & SUPORTE</span>
-              <span id="col2TotalBadge" style="color: #34D399; font-size: 0.75rem;">(0 PAs)</span>
-            </div>
-            <div id="sectorCol2" class="desk-units-subgrid desk-subgrid-1col"></div>
+        <!-- FILEIRA 2: GESTÃO & SUPORTE (3 BAIAS EM 1 COLUNA) -->
+        <div class="fileira-clean-card">
+          <div class="fileira-card-header">
+            <span>📍 FILEIRA 2 (GESTÃO & SUPORTE)</span>
+            <span id="col2TotalBadge" style="color: var(--gol-orange); font-size: 0.75rem;">(0 PAs)</span>
           </div>
+          <div id="sectorCol2" class="desk-units-subgrid desk-subgrid-1col"></div>
+        </div>
 
-          <!-- FILEIRA 3: ESPECIALIZADOS & PLANEJAMENTO (4 BAIAS EM 1 COLUNA) -->
-          <div class="blueprint-fileira-block">
-            <div class="blueprint-fileira-title">
-              <span>📍 FILEIRA 3 &bull; ESPECIALIZADOS</span>
-              <span id="col3TotalBadge" style="color: #34D399; font-size: 0.75rem;">(0 PAs)</span>
-            </div>
-            <div id="sectorCol3" class="desk-units-subgrid desk-subgrid-1col"></div>
+        <!-- FILEIRA 3: ESPECIALIZADOS & PLANEJAMENTO (4 BAIAS EM 1 COLUNA) -->
+        <div class="fileira-clean-card">
+          <div class="fileira-card-header">
+            <span>📍 FILEIRA 3 (ESPECIALIZADOS)</span>
+            <span id="col3TotalBadge" style="color: var(--gol-orange); font-size: 0.75rem;">(0 PAs)</span>
           </div>
+          <div id="sectorCol3" class="desk-units-subgrid desk-subgrid-1col"></div>
         </div>
       </section>
     </div>
@@ -2956,22 +2896,22 @@
           else if (item.col === 3) col3Total += itemTotal;
 
           const card = document.createElement('div');
-          card.className = 'desk-sketch-unit';
+          card.className = 'desk-clean-unit';
 
           let controlsHtml = '';
           if (isGestor) {
             controlsHtml = `
               <div class="desk-quick-actions">
-                <button type="button" class="btn-quick-qty btn-dec-person" data-id="${item.id}" title="Diminuir Pessoas">-</button>
-                <span style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; width: 18px; text-align: center; color: #FFF;">${item.count}</span>
-                <button type="button" class="btn-quick-qty btn-inc-person" data-id="${item.id}" title="Aumentar Pessoas">+</button>
+                <button type="button" class="btn-qty btn-dec-person" data-id="${item.id}" title="Diminuir Pessoas">-</button>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; width: 22px; text-align: center; color: #FFF;">${item.count}</span>
+                <button type="button" class="btn-qty btn-inc-person" data-id="${item.id}" title="Aumentar Pessoas">+</button>
               </div>
             `;
           }
 
-          let subtextStr = `${item.count} PESSOAS`;
+          let subtextStr = `${item.count} Colaboradores`;
           if (item.supervisors > 0) {
-            subtextStr += ` &bull; 👔 ${item.supervisors} SUP.`;
+            subtextStr += ` &bull; 👔 ${item.supervisors} Sup.`;
           }
 
           card.innerHTML = `
@@ -2979,7 +2919,7 @@
               <div class="desk-unit-label">${item.name}</div>
               <div class="desk-unit-subtext">${subtextStr}</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
               <span class="desk-unit-badge">${itemTotal} PAs</span>
               ${controlsHtml}
             </div>
