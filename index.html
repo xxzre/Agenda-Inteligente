@@ -708,7 +708,6 @@
       <div class="user-session-group">
         <span id="userInfo" style="font-weight: 600;"></span>
         <span id="userRoleBadge" class="role-badge admin">👑 Admin</span>
-        <button id="btnSwitchSelfRole" type="button" class="btn" style="padding: 4px 10px; font-size: 0.75rem;" title="Alternar perfil entre Admin e Gestor">🔄 Alternar Perfil</button>
         <button id="btnLogout" class="btn btn-danger" style="padding: 6px 14px; font-size: 0.8rem;">🚪 Sair</button>
       </div>
     </div>
@@ -1901,30 +1900,6 @@
         });
       }
 
-      function toggleSelfRole() {
-        const newRole = (userRole === 'admin') ? 'gestor' : 'admin';
-        userRole = newRole;
-
-        if (userRole === 'admin') {
-          userRoleBadgeEl.textContent = '👑 Admin';
-          userRoleBadgeEl.className = 'role-badge admin';
-        } else {
-          userRoleBadgeEl.textContent = '👔 Gestor';
-          userRoleBadgeEl.className = 'role-badge gestor';
-        }
-
-        if (db && currentUser) {
-          db.collection('users').doc(currentUser.uid).update({ role: newRole })
-            .then(() => console.log("Perfil atualizado para:", newRole))
-            .catch(e => console.error("Erro ao atualizar perfil:", e));
-        }
-        renderActiveTab();
-      }
-
-      const btnSwitchSelfRole = document.getElementById('btnSwitchSelfRole');
-      if (btnSwitchSelfRole) btnSwitchSelfRole.onclick = toggleSelfRole;
-      if (userRoleBadgeEl) userRoleBadgeEl.onclick = toggleSelfRole;
-
       if (standaloneToggleLink) {
         standaloneToggleLink.addEventListener('click', (e) => {
           e.preventDefault();
@@ -2652,8 +2627,8 @@
               div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--bg-card-day); border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.85rem;';
               
               let deleteBtnHtml = '';
-              if (userRole === 'gestor' || userRole === 'admin') {
-                deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover este agendamento">🗑️ Excluir</button>`;
+              if (isMe) {
+                deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover minha reserva">🗑️ Excluir</button>`;
               }
 
               div.innerHTML = `
@@ -2672,18 +2647,24 @@
               bookingUsersList.appendChild(div);
             });
 
-            if (userRole === 'gestor') {
-              bookingUsersList.querySelectorAll('.btn-delete-booking').forEach(btn => {
-                btn.onclick = async (e) => {
-                  e.stopPropagation();
-                  const idx = parseInt(btn.dataset.index);
-                  usersBooked.splice(idx, 1);
-                  await saveBookingData(dateKey);
-                  openBookingModal(selectedBookingDay);
-                  renderBookingCalendar(true);
-                };
-              });
-            }
+            bookingUsersList.querySelectorAll('.btn-delete-booking').forEach(btn => {
+              btn.onclick = async (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.index);
+                const targetUser = usersBooked[idx];
+                const isOwner = targetUser && (targetUser.uid === currentUserId || (currentUserEmail && targetUser.email === currentUserEmail));
+
+                if (!isOwner) {
+                  alert("⚠️ Apenas a própria pessoa que reservou a vaga pode cancelar este agendamento.");
+                  return;
+                }
+
+                usersBooked.splice(idx, 1);
+                await saveBookingData(dateKey);
+                openBookingModal(selectedBookingDay);
+                renderBookingCalendar(true);
+              };
+            });
           }
         }
 
