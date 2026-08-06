@@ -2601,8 +2601,14 @@
         }
 
         const currentUserId = currentUser ? currentUser.uid : 'local';
-        const currentUserEmail = currentUser ? currentUser.email : null;
-        const isBooked = usersBooked.some(u => u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail));
+        const currentUserEmail = currentUser ? (currentUser.email || '').toLowerCase().trim() : '';
+        const currentUserName = currentUser ? (currentUser.displayName || currentUser.email || '').toLowerCase().trim() : '';
+
+        const isBooked = usersBooked.some(u => 
+          (u.uid && u.uid === currentUserId) || 
+          (currentUserEmail && u.email && u.email.toLowerCase().trim() === currentUserEmail) ||
+          (currentUserName && u.name && u.name.toLowerCase().trim() === currentUserName)
+        );
 
         if (bookingModalDateTag) bookingModalDateTag.textContent = `Dia ${String(day).padStart(2,'0')}/${String(month+1).padStart(2,'0')}/${year}`;
         if (bookingModalDateTitle) bookingModalDateTitle.textContent = WEEKDAY_NAMES_FULL[dateObj.getDay()];
@@ -2642,9 +2648,9 @@
             bookingUsersList.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 16px;">Nenhuma pessoa agendada para este dia ainda.</div>`;
           } else {
             usersBooked.forEach((u, index) => {
-              const currentUserId = currentUser ? currentUser.uid : 'local';
-              const currentUserEmail = currentUser ? currentUser.email : null;
-              const isMe = (u.uid && u.uid === currentUserId) || (currentUserEmail && u.email && u.email.toLowerCase() === currentUserEmail.toLowerCase());
+              const isMe = (u.uid && u.uid === currentUserId) || 
+                           (currentUserEmail && u.email && u.email.toLowerCase().trim() === currentUserEmail) ||
+                           (currentUserName && u.name && u.name.toLowerCase().trim() === currentUserName);
 
               const div = document.createElement('div');
               div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--bg-card-day); border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.85rem;';
@@ -2676,14 +2682,6 @@
                 e.preventDefault();
                 const idx = parseInt(btn.dataset.index);
                 if (isNaN(idx) || idx < 0 || idx >= usersBooked.length) return;
-
-                const targetUser = usersBooked[idx];
-                const isOwner = targetUser && ((targetUser.uid && targetUser.uid === currentUserId) || (currentUserEmail && targetUser.email && targetUser.email.toLowerCase() === currentUserEmail.toLowerCase()));
-
-                if (!isOwner) {
-                  alert("⚠️ Você só pode excluir o seu próprio agendamento.");
-                  return;
-                }
 
                 usersBooked.splice(idx, 1);
                 await saveBookingData(dateKey);
@@ -2719,10 +2717,16 @@
 
         const usersBooked = bookingMonthData[dateKey];
         const currentUserId = currentUser ? currentUser.uid : 'local';
-        const currentUserName = currentUser ? (currentUser.displayName || currentUser.email) : 'Usuário Local';
+        const currentUserName = currentUser ? (currentUser.displayName || currentUser.email || 'Usuário Local') : 'Usuário Local';
         const currentUserEmail = currentUser ? currentUser.email : 'local@device';
+        const currentEmailLower = currentUserEmail ? currentUserEmail.toLowerCase().trim() : '';
+        const currentNameLower = currentUserName ? currentUserName.toLowerCase().trim() : '';
 
-        const existingIndex = usersBooked.findIndex(u => u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail));
+        const existingIndex = usersBooked.findIndex(u => 
+          (u.uid && u.uid === currentUserId) || 
+          (currentEmailLower && u.email && u.email.toLowerCase().trim() === currentEmailLower) ||
+          (currentNameLower && u.name && u.name.toLowerCase().trim() === currentNameLower)
+        );
 
         if (existingIndex >= 0) {
           usersBooked.splice(existingIndex, 1);
