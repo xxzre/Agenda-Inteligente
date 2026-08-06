@@ -2644,16 +2644,14 @@
             usersBooked.forEach((u, index) => {
               const currentUserId = currentUser ? currentUser.uid : 'local';
               const currentUserEmail = currentUser ? currentUser.email : null;
-              const isMe = u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail) || (u.addedByUid && u.addedByUid === currentUserId);
-              const isGestorOrAdmin = (userRole === 'gestor' || userRole === 'admin');
-              const canDelete = isMe || isGestorOrAdmin;
+              const isMe = (u.uid && u.uid === currentUserId) || (currentUserEmail && u.email && u.email.toLowerCase() === currentUserEmail.toLowerCase());
 
               const div = document.createElement('div');
               div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--bg-card-day); border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.85rem;';
               
               let deleteBtnHtml = '';
-              if (canDelete) {
-                deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover esta reserva">🗑️ Excluir</button>`;
+              if (isMe) {
+                deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover minha reserva">🗑️ Excluir</button>`;
               }
 
               div.innerHTML = `
@@ -2678,6 +2676,14 @@
                 e.preventDefault();
                 const idx = parseInt(btn.dataset.index);
                 if (isNaN(idx) || idx < 0 || idx >= usersBooked.length) return;
+
+                const targetUser = usersBooked[idx];
+                const isOwner = targetUser && ((targetUser.uid && targetUser.uid === currentUserId) || (currentUserEmail && targetUser.email && targetUser.email.toLowerCase() === currentUserEmail.toLowerCase()));
+
+                if (!isOwner) {
+                  alert("⚠️ Você só pode excluir o seu próprio agendamento.");
+                  return;
+                }
 
                 usersBooked.splice(idx, 1);
                 await saveBookingData(dateKey);
