@@ -2642,13 +2642,18 @@
             bookingUsersList.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 16px;">Nenhuma pessoa agendada para este dia ainda.</div>`;
           } else {
             usersBooked.forEach((u, index) => {
-              const isMe = u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail);
+              const currentUserId = currentUser ? currentUser.uid : 'local';
+              const currentUserEmail = currentUser ? currentUser.email : null;
+              const isMe = u.uid === currentUserId || (currentUserEmail && u.email === currentUserEmail) || (u.addedByUid && u.addedByUid === currentUserId);
+              const isGestorOrAdmin = (userRole === 'gestor' || userRole === 'admin');
+              const canDelete = isMe || isGestorOrAdmin;
+
               const div = document.createElement('div');
               div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--bg-card-day); border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.85rem;';
               
               let deleteBtnHtml = '';
-              if (isMe) {
-                deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover minha reserva">🗑️ Excluir</button>`;
+              if (canDelete) {
+                deleteBtnHtml = `<button type="button" class="btn btn-danger btn-delete-booking" data-index="${index}" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" title="Remover esta reserva">🗑️ Excluir</button>`;
               }
 
               div.innerHTML = `
@@ -2670,14 +2675,9 @@
             bookingUsersList.querySelectorAll('.btn-delete-booking').forEach(btn => {
               btn.onclick = async (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 const idx = parseInt(btn.dataset.index);
-                const targetUser = usersBooked[idx];
-                const isOwner = targetUser && (targetUser.uid === currentUserId || (currentUserEmail && targetUser.email === currentUserEmail));
-
-                if (!isOwner) {
-                  alert("⚠️ Apenas a própria pessoa que reservou a vaga pode cancelar este agendamento.");
-                  return;
-                }
+                if (isNaN(idx) || idx < 0 || idx >= usersBooked.length) return;
 
                 usersBooked.splice(idx, 1);
                 await saveBookingData(dateKey);
@@ -2762,6 +2762,8 @@
           return;
         }
 
+        const currentUserId = currentUser ? currentUser.uid : 'local';
+        const currentUserEmail = currentUser ? currentUser.email : 'gestor@local';
         const rawName = gestorMemberNameInput ? gestorMemberNameInput.value.trim() : '';
         const personName = rawName || `Reserva Equipe (Vaga #${usersBooked.length + 1})`;
         const personEmail = rawName ? `${rawName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '.')}@voegol.com.br` : 'reserva.equipe@voegol.com.br';
@@ -2771,7 +2773,9 @@
           name: personName,
           email: personEmail,
           bookedAt: new Date().toISOString(),
-          addedByGestor: true
+          addedByGestor: true,
+          addedByUid: currentUserId,
+          addedByEmail: currentUserEmail
         });
 
         if (gestorMemberNameInput) gestorMemberNameInput.value = '';
