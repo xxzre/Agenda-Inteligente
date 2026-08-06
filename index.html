@@ -424,103 +424,115 @@
       padding: 20px; box-shadow: var(--shadow-md); overflow-x: auto;
     }
 
-    /* PLANTA DE FILEIRAS DA OPERAÇÃO (ESTRUTURA LIMPA INTEGRADA AO TEMA) */
+    /* DIMENSIONAMENTO DE FILEIRAS — DESIGN FIEL A FILEIRAS_OPERACAO_GOL.HTML */
     .sectors-container { display: flex; flex-direction: column; gap: 20px; }
     
-    .fileiras-clean-grid {
+    .fileiras-gol-grid {
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr;
-      gap: 18px;
-      align-items: stretch;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      gap: 20px;
+      align-items: start;
     }
-    @media (max-width: 1000px) {
-      .fileiras-clean-grid { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .fileiras-gol-grid { grid-template-columns: 1fr; }
     }
 
-    .fileira-clean-card {
+    .fileira-gol-card {
       background: var(--bg-card);
+      border-radius: 16px;
       border: 1px solid var(--border-card);
-      border-radius: var(--radius-md);
-      padding: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      box-shadow: var(--shadow-md);
     }
 
-    .fileira-card-header {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--gol-orange);
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-card);
+    .fileira-gol-header {
+      background: linear-gradient(135deg, #0B1F3A 0%, #16305A 100%);
+      color: #FFFFFF;
+      padding: 16px 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-card);
+    }
+    .fileira-gol-header .fileira-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+    }
+    .fileira-gol-header .fileira-name small {
+      display: block;
+      font-weight: 400;
+      letter-spacing: normal;
+      text-transform: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    .fileira-gol-header .fileira-pas {
+      background: var(--gol-orange);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(255, 106, 0, 0.3);
     }
 
-    .desk-units-subgrid {
-      display: grid;
+    .setores-gol-container {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
       gap: 10px;
       flex: 1;
     }
-    .desk-subgrid-2cols {
-      grid-template-columns: 1fr 1fr;
-    }
-    .desk-subgrid-1col {
-      grid-template-columns: 1fr;
-    }
-    @media (max-width: 650px) {
-      .desk-subgrid-2cols { grid-template-columns: 1fr; }
-    }
 
-    .desk-clean-unit {
+    .setor-gol-item {
       background: var(--bg-card-day);
       border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
+      border-left: 4px solid var(--gol-orange);
+      border-radius: 10px;
       padding: 12px 14px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      transition: var(--transition-fast);
+      align-items: center;
+      gap: 10px;
+      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
     }
-    .desk-clean-unit:hover {
-      border-color: var(--border-card-hover);
-      box-shadow: var(--shadow-sm);
+    .setor-gol-item:hover {
+      background: rgba(255, 106, 0, 0.06);
+      border-color: rgba(255, 106, 0, 0.3);
+      border-left-color: var(--gol-orange);
+      transform: translateX(3px);
     }
-
-    .desk-unit-label {
-      font-size: 0.875rem;
+    .setor-gol-item .sname {
+      font-size: 13.5px;
       font-weight: 700;
       color: #FFFFFF;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
     }
-
-    .desk-unit-subtext {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
+    .setor-gol-item .sdetail {
+      font-size: 11.5px;
       color: var(--text-muted);
       margin-top: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    }
+    .setor-gol-item .scount {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--gol-orange);
+      white-space: nowrap;
     }
 
-    .desk-unit-badge {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--gol-orange);
-      background: var(--bg-gol-orange);
-      border: 1px solid var(--border-gol-orange);
-      padding: 3px 8px;
-      border-radius: var(--radius-sm);
-      white-space: nowrap;
+    .fileira-gol-footer {
+      padding: 12px 20px 16px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      border-top: 1px dashed var(--border-card);
+      margin: 4px 14px 0;
     }
 
     .desk-quick-actions {
@@ -1063,34 +1075,39 @@
         </div>
       </section>
 
-      <!-- GRID DE FILEIRAS (3 BLOCOS ALINHADOS E LIMPOS) -->
-      <section class="fileiras-clean-grid">
-        <!-- FILEIRA 1: OPERAÇÃO (8 BAIAS EM SUBGRID 2x4) -->
-        <div class="fileira-clean-card">
-          <div class="fileira-card-header">
-            <span>📍 FILEIRA 1 (OPERAÇÃO & SMILES)</span>
-            <span id="col1TotalBadge" style="color: var(--gol-orange); font-size: 0.75rem;">(0 PAs)</span>
+      <!-- GRID DE FILEIRAS CONFORME FILEIRAS_OPERACAO_GOL.HTML -->
+      <section class="fileiras-gol-grid">
+
+        <!-- FILEIRA 1 -->
+        <div class="fileira-gol-card">
+          <div class="fileira-gol-header">
+            <div class="fileira-name">Fileira 1<small>Operação & Smiles</small></div>
+            <div id="col1TotalBadge" class="fileira-pas">90 PAs</div>
           </div>
-          <div id="sectorCol1" class="desk-units-subgrid desk-subgrid-2cols"></div>
+          <div id="sectorCol1" class="setores-gol-container"></div>
+          <div class="fileira-gol-footer">8 setores nesta fileira</div>
         </div>
 
-        <!-- FILEIRA 2: GESTÃO & SUPORTE (3 BAIAS EM 1 COLUNA) -->
-        <div class="fileira-clean-card">
-          <div class="fileira-card-header">
-            <span>📍 FILEIRA 2 (GESTÃO & SUPORTE)</span>
-            <span id="col2TotalBadge" style="color: var(--gol-orange); font-size: 0.75rem;">(0 PAs)</span>
+        <!-- FILEIRA 2 -->
+        <div class="fileira-gol-card">
+          <div class="fileira-gol-header">
+            <div class="fileira-name">Fileira 2<small>Gestão & Suporte</small></div>
+            <div id="col2TotalBadge" class="fileira-pas">24 PAs</div>
           </div>
-          <div id="sectorCol2" class="desk-units-subgrid desk-subgrid-1col"></div>
+          <div id="sectorCol2" class="setores-gol-container"></div>
+          <div class="fileira-gol-footer">3 setores nesta fileira</div>
         </div>
 
-        <!-- FILEIRA 3: ESPECIALIZADOS & PLANEJAMENTO (4 BAIAS EM 1 COLUNA) -->
-        <div class="fileira-clean-card">
-          <div class="fileira-card-header">
-            <span>📍 FILEIRA 3 (ESPECIALIZADOS)</span>
-            <span id="col3TotalBadge" style="color: var(--gol-orange); font-size: 0.75rem;">(0 PAs)</span>
+        <!-- FILEIRA 3 -->
+        <div class="fileira-gol-card">
+          <div class="fileira-gol-header">
+            <div class="fileira-name">Fileira 3<small>Especializados</small></div>
+            <div id="col3TotalBadge" class="fileira-pas">38 PAs</div>
           </div>
-          <div id="sectorCol3" class="desk-units-subgrid desk-subgrid-1col"></div>
+          <div id="sectorCol3" class="setores-gol-container"></div>
+          <div class="fileira-gol-footer">4 setores nesta fileira</div>
         </div>
+
       </section>
     </div>
 
@@ -2880,31 +2897,31 @@
           else if (item.col === 3) col3Total += itemTotal;
 
           const card = document.createElement('div');
-          card.className = 'desk-clean-unit';
+          card.className = 'setor-gol-item';
 
           let controlsHtml = '';
           if (isGestor) {
             controlsHtml = `
-              <div class="desk-quick-actions">
+              <div class="desk-quick-actions" style="margin-left: 8px;">
                 <button type="button" class="btn-qty btn-dec-person" data-id="${item.id}" title="Diminuir Pessoas">-</button>
-                <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; width: 22px; text-align: center; color: #FFF;">${item.count}</span>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; width: 20px; text-align: center; color: #FFF;">${item.count}</span>
                 <button type="button" class="btn-qty btn-inc-person" data-id="${item.id}" title="Aumentar Pessoas">+</button>
               </div>
             `;
           }
 
-          let subtextStr = `${item.count} Colaboradores`;
+          let detailHtml = '';
           if (item.supervisors > 0) {
-            subtextStr += ` &bull; 👔 ${item.supervisors} Sup.`;
+            detailHtml = `<div class="sdetail">${item.count} + ${item.supervisors} supervisor${item.supervisors > 1 ? 'es' : ''}</div>`;
           }
 
           card.innerHTML = `
-            <div style="overflow: hidden;">
-              <div class="desk-unit-label">${item.name}</div>
-              <div class="desk-unit-subtext">${subtextStr}</div>
+            <div>
+              <div class="sname">${item.name}</div>
+              ${detailHtml}
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-              <span class="desk-unit-badge">${itemTotal} PAs</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="scount">${itemTotal}</div>
               ${controlsHtml}
             </div>
           `;
@@ -2923,9 +2940,9 @@
 
         if (totalEl) totalEl.textContent = totalHeadcount;
         if (avgEl) avgEl.textContent = sectorsData.length > 0 ? (totalHeadcount / sectorsData.length).toFixed(1) : 0;
-        if (col1Badge) col1Badge.textContent = `(${col1Total} PAs)`;
-        if (col2Badge) col2Badge.textContent = `(${col2Total} PAs)`;
-        if (col3Badge) col3Badge.textContent = `(${col3Total} PAs)`;
+        if (col1Badge) col1Badge.textContent = `${col1Total} PAs`;
+        if (col2Badge) col2Badge.textContent = `${col2Total} PAs`;
+        if (col3Badge) col3Badge.textContent = `${col3Total} PAs`;
 
         // Event listeners for Gestor controls
         if (isGestor) {
