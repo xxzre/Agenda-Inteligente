@@ -424,121 +424,620 @@
       padding: 20px; box-shadow: var(--shadow-md); overflow-x: auto;
     }
 
-    /* DIMENSIONAMENTO DE FILEIRAS — DESIGN FIEL A FILEIRAS_OPERACAO_GOL.HTML */
-    .sectors-container { display: flex; flex-direction: column; gap: 20px; }
-    
-    .fileiras-gol-grid {
+    /* PLANTA BAIXA & DIMENSIONAMENTO DE SALAS DA OPERAÇÃO (CROQUI FÍSICO v2.4) */
+    .sectors-container { display: flex; flex-direction: column; gap: 22px; }
+
+    .sectors-kpi-grid {
       display: grid;
-      grid-template-columns: 1.35fr 1fr 1fr;
-      gap: 20px;
-      align-items: start;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
     }
     @media (max-width: 900px) {
-      .fileiras-gol-grid { grid-template-columns: 1fr; }
+      .sectors-kpi-grid { grid-template-columns: 1fr; }
     }
 
-    .fileira-gol-card {
-      background: var(--bg-card);
-      border-radius: 16px;
-      border: 1px solid var(--border-card);
+    .sector-kpi-card {
+      background: #121723;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 18px 22px 16px;
+      position: relative;
       overflow: hidden;
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
     }
+    .sector-kpi-card.cyan { border-left: 3px solid #06B6D4; }
+    .sector-kpi-card.emerald { border-left: 3px solid #10B981; }
+    .sector-kpi-card.orange { border-left: 3px solid #FF6A00; }
 
-    .fileira-gol-header {
-      background: linear-gradient(135deg, #0B1F3A 0%, #16305A 100%);
-      color: #FFFFFF;
-      padding: 16px 20px;
+    .sector-kpi-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid var(--border-card);
     }
-    .fileira-gol-header .fileira-name {
-      font-size: 13.5px;
+    .sector-kpi-title {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #FFFFFF;
+      color: #94A3B8;
     }
-    .fileira-gol-header .fileira-name small {
-      display: block;
-      font-weight: 400;
-      letter-spacing: normal;
-      text-transform: none;
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 11px;
-      margin-top: 2px;
+    .sector-kpi-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
     }
-    .fileira-gol-header .fileira-pas {
-      background: var(--gol-orange);
-      color: #FFFFFF;
-      font-size: 12px;
+    .sector-kpi-card.cyan .sector-kpi-icon { background: rgba(6, 182, 212, 0.12); color: #06B6D4; border: 1px solid rgba(6, 182, 212, 0.25); }
+    .sector-kpi-card.emerald .sector-kpi-icon { background: rgba(16, 185, 129, 0.12); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .sector-kpi-card.orange .sector-kpi-icon { background: rgba(255, 106, 0, 0.12); color: #FF6A00; border: 1px solid rgba(255, 106, 0, 0.25); }
+
+    .sector-kpi-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .sector-kpi-num {
+      font-family: var(--font-mono);
+      font-size: 2rem;
       font-weight: 800;
-      padding: 5px 12px;
-      border-radius: 999px;
-      white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(255, 106, 0, 0.3);
+      color: #FFFFFF;
+      line-height: 1;
+    }
+    .sector-kpi-sub {
+      font-size: 0.78rem;
+      color: #64748B;
+    }
+    .sector-kpi-bar {
+      height: 4px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .sector-kpi-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+    }
+    .sector-kpi-card.cyan .sector-kpi-bar-fill { width: 88%; background: #06B6D4; }
+    .sector-kpi-card.emerald .sector-kpi-bar-fill { width: 100%; background: #10B981; }
+    .sector-kpi-card.orange .sector-kpi-bar-fill { width: 76%; background: #FF6A00; }
+
+    /* CONTAINER PRINCIPAL DA PLANTA BAIXA */
+    .planta-main-shell {
+      background: #111622;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .setores-gol-container {
+    .planta-top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .planta-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .planta-title-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255, 106, 0, 0.12);
+      border: 1px solid rgba(255, 106, 0, 0.35);
+      color: #FF6A00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    .planta-title-text {
+      font-family: var(--font-sans);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0;
+    }
+    .badge-croqui {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #FF6A00;
+      background: rgba(255, 106, 0, 0.12);
+      border: 1px solid rgba(255, 106, 0, 0.35);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .planta-subtitle {
+      font-size: 0.82rem;
+      color: #94A3B8;
+      margin-top: 6px;
+    }
+
+    .planta-controls-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .btn-restore-planta {
+      background: #1B2234;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #E2E8F0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-restore-planta:hover {
+      border-color: #FF6A00;
+      color: #FFFFFF;
+    }
+    .badge-gestor-mode {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #FF6A00;
+      background: rgba(255, 106, 0, 0.08);
+      border: 1px solid rgba(255, 106, 0, 0.35);
+      padding: 6px 12px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* MOLDURA INTERNA DO CROQUI */
+    .croqui-board {
+      background: #0B0F17;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .croqui-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      color: #64748B;
+    }
+    .croqui-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .croqui-meta-highlight {
+      color: #FF6A00;
+      font-weight: 700;
+    }
+    .croqui-legend {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: #94A3B8;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    .legend-dot.ocupado { background: #10B981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.6); }
+    .legend-dot.livre { background: #334155; }
+
+    /* CABEÇALHOS DE ALA */
+    .ala-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .ala-title {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ala-marker {
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .ala-marker.orange { background: #FF6A00; }
+    .ala-marker.blue { background: #3B82F6; }
+
+    .ala-total-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ala-total-pill.orange {
+      color: #FF6A00;
+      background: rgba(255, 106, 0, 0.1);
+      border: 1px solid rgba(255, 106, 0, 0.35);
+    }
+    .ala-total-pill.blue {
+      color: #60A5FA;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+    }
+
+    /* ALA NORTE: GRADE DE 8 SALAS LADO A LADO */
+    .ala-norte-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 1200px) {
+      .ala-norte-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .ala-norte-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .sala-norte-card {
+      background: #121826;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-top: 2px solid #FF6A00;
+      border-radius: 8px;
+      padding: 12px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 152px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .sala-norte-card:hover {
+      border-color: rgba(255, 106, 0, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .sala-top-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .sala-code {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+    .sala-mini-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #93C5FD;
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 1px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .sala-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    /* PONTOS DE OCUPAÇÃO (DOTS) */
+    .pa-dots-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 14px;
+      align-content: flex-start;
+    }
+    .pa-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #10B981;
+    }
+    .pa-dot.sup {
+      background: #38BDF8;
+    }
+
+    .sala-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 6px;
+    }
+    .sala-total-number {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #FF6A00;
+    }
+
+    /* CONTROLES COMPACTOS [- 8 +] */
+    .pa-stepper {
+      display: inline-flex;
+      align-items: center;
+      background: #0B0F17;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      padding: 1px 2px;
+      gap: 2px;
+    }
+    .pa-stepper button {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .pa-stepper button:hover {
+      background: rgba(255, 106, 0, 0.2);
+      color: #FFFFFF;
+    }
+    .pa-stepper .pa-val {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #E2E8F0;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* CORREDOR PRINCIPAL DE CIRCULAÇÃO */
+    .corredor-principal-bar {
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 106, 0, 0.03),
+        rgba(255, 106, 0, 0.03) 10px,
+        rgba(0, 0, 0, 0.2) 10px,
+        rgba(0, 0, 0, 0.2) 20px
+      );
+      border: 1px dashed rgba(255, 106, 0, 0.35);
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+    }
+    .corredor-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #F59E0B;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .badge-zona-fluxo {
+      background: #FF6A00;
+      color: #FFFFFF;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .corredor-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748B;
+      font-size: 0.66rem;
+    }
+    .corredor-right .emergencia {
+      color: #10B981;
+      font-weight: 700;
+    }
+
+    /* ALA SUL: LAYOUT DIVIDIDO POR CORREDOR INTERNO */
+    .ala-sul-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 44px 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    @media (max-width: 980px) {
+      .ala-sul-wrapper { grid-template-columns: 1fr; }
+      .corredor-interno-vertical { display: none; }
+    }
+
+    .sub-wing-box {
+      background: #0E131F;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
       padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sub-wing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #94A3B8;
+      text-transform: uppercase;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .sub-wing-header .wing-pas {
+      color: #FF6A00;
+    }
+
+    .wing-left-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      flex: 1;
+    }
+    @media (max-width: 600px) {
+      .wing-left-grid { grid-template-columns: 1fr; }
+    }
+
+    .wing-right-stack {
       display: flex;
       flex-direction: column;
       gap: 10px;
       flex: 1;
     }
 
-    .setor-gol-item {
-      background: var(--bg-card-day);
-      border: 1px solid var(--border-card);
-      border-left: 4px solid var(--gol-orange);
-      border-radius: 10px;
-      padding: 12px 14px;
+    .sala-sul-card {
+      background: #131A29;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .sala-sul-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+    .sala-sul-card.amber { border-left: 3px solid #F59E0B; }
+    .sala-sul-card.cyan { border-left: 3px solid #06B6D4; }
+    .sala-sul-card.blue { border-left: 3px solid #3B82F6; }
+    .sala-sul-card.purple { border-left: 3px solid #A855F7; }
+    .sala-sul-card.orange { border-left: 3px solid #FF6A00; }
+    .sala-sul-card.emerald { border-left: 3px solid #10B981; }
+
+    .sala-sul-tag {
+      font-family: var(--font-sans);
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .sala-sul-tag.amber { color: #FBBF24; background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .sala-sul-tag.cyan { color: #22D3EE; background: rgba(6, 182, 212, 0.14); border: 1px solid rgba(6, 182, 212, 0.3); }
+    .sala-sul-tag.blue { color: #60A5FA; background: rgba(59, 130, 246, 0.14); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .sala-sul-tag.purple { color: #C084FC; background: rgba(168, 85, 247, 0.14); border: 1px solid rgba(168, 85, 247, 0.3); }
+    .sala-sul-tag.orange { color: #FF6A00; background: rgba(255, 106, 0, 0.14); border: 1px solid rgba(255, 106, 0, 0.35); text-transform: uppercase; font-family: var(--font-mono); }
+    .sala-sul-tag.slate { color: #94A3B8; background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); }
+
+    .sala-sul-total {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+    .sala-sul-card.amber .sala-sul-total { color: #F59E0B; }
+    .sala-sul-card.cyan .sala-sul-total { color: #06B6D4; }
+    .sala-sul-card.blue .sala-sul-total { color: #3B82F6; }
+    .sala-sul-card.purple .sala-sul-total { color: #A855F7; }
+    .sala-sul-card.orange .sala-sul-total { color: #FF6A00; }
+    .sala-sul-card.emerald .sala-sul-total { color: #10B981; }
+
+    .corredor-interno-vertical {
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 106, 0, 0.04),
+        rgba(255, 106, 0, 0.04) 8px,
+        rgba(0, 0, 0, 0.25) 8px,
+        rgba(0, 0, 0, 0.25) 16px
+      );
+      border-left: 1px dashed rgba(255, 106, 0, 0.22);
+      border-right: 1px dashed rgba(255, 106, 0, 0.22);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .corredor-vertical-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    .croqui-footer-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
-      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+      padding-top: 6px;
+      font-size: 0.75rem;
+      color: #94A3B8;
     }
-    .setor-gol-item:hover {
-      background: rgba(255, 106, 0, 0.06);
-      border-color: rgba(255, 106, 0, 0.3);
-      border-left-color: var(--gol-orange);
-      transform: translateX(3px);
-    }
-    .setor-gol-item .sname {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #FFFFFF;
-    }
-    .setor-gol-item .sdetail {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-    .setor-gol-item .scount {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--gol-orange);
-      white-space: nowrap;
-    }
-
-    .fileira-gol-footer {
-      padding: 12px 20px 16px;
-      font-size: 11.5px;
-      color: var(--text-muted);
-      border-top: 1px dashed var(--border-card);
-      margin: 4px 14px 0;
-    }
-
-    .desk-quick-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
+    .croqui-footer-bar code {
+      background: #1E293B;
+      color: #E2E8F0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
     }
 
     .table-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: #FFFFFF; margin-bottom: 16px; }
@@ -750,7 +1249,7 @@
       <div id="mainTabContainer" class="view-switcher-bar">
         <button id="tabMyCalendar" class="tab-btn active">📅 Minha Agenda</button>
         <button id="tabBookingCalendar" class="tab-btn">📌 Agendamentos Coletivos (36 Vagas)</button>
-        <button id="tabSectors" class="tab-btn">🏢 Setores & Equipes</button>
+        <button id="tabSectors" class="tab-btn">🏢 Setores & Equipes (Planta de Salas)</button>
         <button id="tabTeamDashboard" class="tab-btn">👥 Monitoramento de Equipe</button>
       </div>
 
@@ -1021,93 +1520,144 @@
       </section>
     </div> <!-- FIM DE teamDashboardSection -->
 
-    <!-- AREA DE DIMENSIONAMENTO E DISTRIBUIÇÃO DE SETORES & EQUIPES -->
+    <!-- AREA DE DIMENSIONAMENTO E DISTRIBUIÇÃO DE SETORES & EQUIPES (PLANTA DE SALAS) -->
     <div id="sectorsSection" class="sectors-container" style="display: none;">
       <!-- KPIS DE CAPACIDADE DOS SETORES -->
-      <section class="summary-grid">
-        <div class="kpi-card total">
-          <div class="kpi-header">
-            <span class="kpi-label">Capacidade Total da Operação</span>
-            <span>🏢</span>
+      <section class="sectors-kpi-grid">
+        <div class="sector-kpi-card cyan">
+          <div class="sector-kpi-top">
+            <span class="sector-kpi-title">Capacidade Total da Operação</span>
+            <span class="sector-kpi-icon">⊞</span>
           </div>
-          <div class="kpi-value-group">
-            <span id="sectorsTotalCount" class="kpi-value">0</span>
-            <span class="kpi-percentage">colaboradores alocados</span>
+          <div class="sector-kpi-val-row">
+            <span id="sectorsTotalCount" class="sector-kpi-num">152</span>
+            <span class="sector-kpi-sub">colaboradores alocados</span>
           </div>
+          <div class="sector-kpi-bar"><div class="sector-kpi-bar-fill"></div></div>
         </div>
 
-        <div class="kpi-card homeoffice">
-          <div class="kpi-header">
-            <span class="kpi-label">Total de Setores / Equipes</span>
-            <span>📊</span>
+        <div class="sector-kpi-card emerald">
+          <div class="sector-kpi-top">
+            <span class="sector-kpi-title">Total de Setores / Salas Físicas</span>
+            <span class="sector-kpi-icon">🏢</span>
           </div>
-          <div class="kpi-value-group">
-            <span id="sectorsGroupCount" class="kpi-value">15</span>
-            <span class="kpi-percentage">áreas ativas</span>
+          <div class="sector-kpi-val-row">
+            <span id="sectorsGroupCount" class="sector-kpi-num">15</span>
+            <span class="sector-kpi-sub">áreas ativas em planta</span>
           </div>
+          <div class="sector-kpi-bar"><div class="sector-kpi-bar-fill"></div></div>
         </div>
 
-        <div class="kpi-card presencial">
-          <div class="kpi-header">
-            <span class="kpi-label">Média por Setor</span>
-            <span>👥</span>
+        <div class="sector-kpi-card orange">
+          <div class="sector-kpi-top">
+            <span class="sector-kpi-title">Média por Sala / Setor</span>
+            <span class="sector-kpi-icon">👥</span>
           </div>
-          <div class="kpi-value-group">
-            <span id="sectorsAverageCount" class="kpi-value">0</span>
-            <span class="kpi-percentage">pessoas / setor</span>
+          <div class="sector-kpi-val-row">
+            <span id="sectorsAverageCount" class="sector-kpi-num">10.1</span>
+            <span class="sector-kpi-sub">pessoas / sala</span>
           </div>
+          <div class="sector-kpi-bar"><div class="sector-kpi-bar-fill"></div></div>
         </div>
       </section>
 
-      <!-- PAINEL DE CONTROLE DE SETORES & EQUIPES -->
-      <section class="team-table-card" style="padding: 16px 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <!-- PLANTA BAIXA & DIMENSIONAMENTO DE SALAS DA OPERAÇÃO -->
+      <section class="planta-main-shell">
+        <div class="planta-top-header">
           <div>
-            <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: #FFFFFF; font-weight: 600;">🏢 Dimensionamento de Setores e Fileiras da Operação</h3>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">Alocação física de baias por fileiras. Gestores podem editar a quantidade de colaboradores.</span>
+            <div class="planta-title-row">
+              <span class="planta-title-icon">▥</span>
+              <h3 class="planta-title-text">Planta Baixa &amp; Dimensionamento de Salas da Operação</h3>
+              <span class="badge-croqui">CROQUI FÍSICO</span>
+            </div>
+            <p class="planta-subtitle">Alocação física interativa estruturada em salas de operação e circulação por corredores. Gestores podem editar a lotação de PAs em tempo real.</p>
           </div>
-          <div id="gestorSectorsControl" style="display: flex; gap: 8px; align-items: center;">
-            <button id="btnResetSectors" type="button" class="btn" style="display: none; font-size: 0.8rem; padding: 6px 12px;">↺ Restaurar Padrão</button>
-            <span id="gestorSectorNotice" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gol-orange); background: var(--bg-gol-orange); border: 1px solid var(--border-gol-orange); padding: 5px 12px; border-radius: 4px;">
-              👁️ Visão Geral (Modo Leitura)
+          <div id="gestorSectorsControl" class="planta-controls-col">
+            <button id="btnResetSectors" type="button" class="btn-restore-planta" style="display: none;">↺ Restaurar Padrão</button>
+            <span id="gestorSectorNotice" class="badge-gestor-mode">
+              ● Modo Gestor Ativo: Altere as quantidades com + e -
             </span>
           </div>
         </div>
-      </section>
 
-      <!-- GRID DE FILEIRAS CONFORME FILEIRAS_OPERACAO_GOL.HTML -->
-      <section class="fileiras-gol-grid">
-
-        <!-- FILEIRA 1 -->
-        <div class="fileira-gol-card">
-          <div class="fileira-gol-header">
-            <div class="fileira-name">Fileira 1<small>Operação & Smiles</small></div>
-            <div id="col1TotalBadge" class="fileira-pas">90 PAs</div>
+        <!-- QUADRO INTERNO DO CROQUI -->
+        <div class="croqui-board">
+          <!-- BARRA DE METADADOS DA PLANTA -->
+          <div class="croqui-meta-bar">
+            <div class="croqui-meta-left">
+              <span class="croqui-meta-highlight">● PLANTA TÉRREA: BLOCO OPERACIONAL</span>
+              <span>ESCALA: 1 PA = 1 POSTO DE TRABALHO</span>
+              <span id="croquiMaxCapText">CAPACIDADE MÁXIMA DA ALA: 152 PAs</span>
+            </div>
+            <div class="croqui-legend">
+              <span><i class="legend-dot ocupado"></i>Ocupado</span>
+              <span><i class="legend-dot livre"></i>Livre</span>
+            </div>
           </div>
-          <div id="sectorCol1" class="setores-gol-container"></div>
-          <div class="fileira-gol-footer">8 setores nesta fileira</div>
-        </div>
 
-        <!-- FILEIRA 2 -->
-        <div class="fileira-gol-card">
-          <div class="fileira-gol-header">
-            <div class="fileira-name">Fileira 2<small>Gestão & Suporte</small></div>
-            <div id="col2TotalBadge" class="fileira-pas">24 PAs</div>
+          <!-- ALA NORTE: OPERAÇÃO & SMILES -->
+          <div class="ala-header">
+            <div class="ala-title">
+              <span class="ala-marker orange"></span>
+              <span>ALA NORTE &bull; OPERAÇÃO &amp; SMILES</span>
+            </div>
+            <div id="col1TotalBadge" class="ala-total-pill orange">TOTAL: 90 PAS</div>
           </div>
-          <div id="sectorCol2" class="setores-gol-container"></div>
-          <div class="fileira-gol-footer">3 setores nesta fileira</div>
-        </div>
 
-        <!-- FILEIRA 3 -->
-        <div class="fileira-gol-card">
-          <div class="fileira-gol-header">
-            <div class="fileira-name">Fileira 3<small>Especializados</small></div>
-            <div id="col3TotalBadge" class="fileira-pas">38 PAs</div>
+          <div id="sectorCol1" class="ala-norte-grid"></div>
+
+          <!-- CORREDOR PRINCIPAL DE CIRCULAÇÃO -->
+          <div class="corredor-principal-bar">
+            <div class="corredor-left">
+              <span class="badge-zona-fluxo">ZONA DE FLUXO</span>
+              <span>&rarr; CORREDOR PRINCIPAL DE CIRCULAÇÃO &bull; CONECTA ALA NORTE &amp; SUL</span>
+            </div>
+            <div class="corredor-right">
+              <span class="emergencia">&rarr; SAÍDA DE EMERGÊNCIA LESTE</span>
+              <span>&bull; CATRACAS BIOMÉTRICAS ATIVAS</span>
+            </div>
           </div>
-          <div id="sectorCol3" class="setores-gol-container"></div>
-          <div class="fileira-gol-footer">4 setores nesta fileira</div>
-        </div>
 
+          <!-- ALA SUL: SUPORTE & ESPECIALIZADOS -->
+          <div class="ala-header">
+            <div class="ala-title">
+              <span class="ala-marker blue"></span>
+              <span>ALA SUL &bull; SUPORTE &amp; ESPECIALIZADOS</span>
+            </div>
+            <div id="alaSulTotalBadge" class="ala-total-pill blue">TOTAL: 62 PAS (24 GESTÃO + 38 ESPECIALIZADOS)</div>
+          </div>
+
+          <div class="ala-sul-wrapper">
+            <!-- SETOR S-ESQUERDA (ESPECIALIZADOS) -->
+            <div class="sub-wing-box">
+              <div class="sub-wing-header">
+                <span>SETOR S-ESQUERDA (ESPECIALIZADOS)</span>
+                <span id="col3TotalBadge" class="wing-pas">38 PAs</span>
+              </div>
+              <div id="sectorCol3" class="wing-left-grid"></div>
+            </div>
+
+            <!-- CORREDOR INTERNO VERTICAL -->
+            <div class="corredor-interno-vertical">
+              <span class="corredor-vertical-label">CORREDOR INTERNO</span>
+            </div>
+
+            <!-- SETOR S-DIREITA (GESTÃO & QUALIDADE) -->
+            <div class="sub-wing-box">
+              <div class="sub-wing-header">
+                <span>SETOR S-DIREITA (GESTÃO &amp; QUALIDADE)</span>
+                <span id="col2TotalBadge" class="wing-pas">24 PAs</span>
+              </div>
+              <div id="sectorCol2" class="wing-right-stack"></div>
+            </div>
+          </div>
+
+          <!-- RODAPÉ DO CROQUI -->
+          <div class="croqui-footer-bar">
+            <span><strong style="color: #FF6A00;">●</strong> Dica do Arquiteto: Pressione <code>+</code> ou <code>-</code> nas baias para remanejar posições entre salas.</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem;">Versão da Planta: <strong style="color: #FF6A00;">v2.4-CroquiHQ</strong></span>
+          </div>
+        </div>
       </section>
     </div>
 
@@ -2806,38 +3356,42 @@
       }
 
       // ==========================================================================
-      // LÓGICA DE DIMENSIONAMENTO E ALOCAÇÃO DE SETORES & EQUIPES
+      // LÓGICA DE DIMENSIONAMENTO E ALOCAÇÃO DE SETORES & EQUIPES (CROQUI v2.4)
       // ==========================================================================
       const DEFAULT_SECTORS_DATA = [
-        // Coluna 1: Operação & Atendimento
-        { id: 'magno', name: 'MAGNO', col: 1, count: 7, supervisors: 0 },
-        { id: 'canais_1', name: 'CANAIS (Grupo 1)', col: 1, count: 12, supervisors: 0 },
-        { id: 'canais_2', name: 'CANAIS (Grupo 2)', col: 1, count: 14, supervisors: 0 },
-        { id: 'canais_3', name: 'CANAIS (Grupo 3)', col: 1, count: 14, supervisors: 0 },
-        { id: 'smiles_1', name: 'SMILES (Operação 1)', col: 1, count: 11, supervisors: 1 },
-        { id: 'smiles_2', name: 'SMILES (Operação 2)', col: 1, count: 10, supervisors: 0 },
-        { id: 'smiles_3', name: 'SMILES (Operação 3)', col: 1, count: 9, supervisors: 2 },
-        { id: 'smiles_4', name: 'SMILES (Operação 4)', col: 1, count: 8, supervisors: 2 },
+        // Ala Norte: Operação & Smiles (SALA N-01 a SALA N-08)
+        { id: 'smiles_4', roomCode: 'SALA N-01', name: 'SMILES (Op. 4)', col: 1, count: 8, supervisors: 2 },
+        { id: 'smiles_3', roomCode: 'SALA N-02', name: 'SMILES (Op. 3)', col: 1, count: 9, supervisors: 2 },
+        { id: 'smiles_2', roomCode: 'SALA N-03', name: 'SMILES (Op. 2)', col: 1, count: 10, supervisors: 0 },
+        { id: 'smiles_1', roomCode: 'SALA N-04', name: 'SMILES (Op. 1)', col: 1, count: 11, supervisors: 1 },
+        { id: 'canais_3', roomCode: 'SALA N-05', name: 'CANAIS (Grupo 3)', col: 1, count: 14, supervisors: 0 },
+        { id: 'canais_2', roomCode: 'SALA N-06', name: 'CANAIS (Grupo 2)', col: 1, count: 14, supervisors: 0 },
+        { id: 'canais_1', roomCode: 'SALA N-07', name: 'CANAIS (Grupo 1)', col: 1, count: 12, supervisors: 0 },
+        { id: 'magno',    roomCode: 'SALA N-08', name: 'MAGNO', col: 1, count: 7, supervisors: 0 },
 
-        // Coluna 2: Gestão & Suporte
-        { id: 'qualidade', name: 'QUALIDADE', col: 2, count: 8, supervisors: 0 },
-        { id: 'analista_admin', name: 'ANALISTA E ADMIN', col: 2, count: 10, supervisors: 0 },
-        { id: 'coordenacao', name: 'COORDENAÇÃO', col: 2, count: 6, supervisors: 0 },
+        // Ala Sul Esquerda: Especializados (SALA S-01 a SALA S-04)
+        { id: 'acomodacao',   roomCode: 'SALA S-01', name: 'ACOMODAÇÃO',    col: 3, count: 10, supervisors: 0, tag: 'Turnos',          color: 'amber',  tagColor: 'amber' },
+        { id: 'analista',     roomCode: 'SALA S-02', name: 'ANALISTA',      col: 3, count: 10, supervisors: 0, tag: 'Operações',       color: 'cyan',   tagColor: 'cyan' },
+        { id: 'b2b',          roomCode: 'SALA S-03', name: 'B2B CORPORATE', col: 3, count: 10, supervisors: 0, tag: 'Corporativo',     color: 'blue',   tagColor: 'blue' },
+        { id: 'planejamento', roomCode: 'SALA S-04', name: 'PLANEJAMENTO',  col: 3, count: 8,  supervisors: 0, tag: 'Malha & Escalas', color: 'purple', tagColor: 'purple' },
 
-        // Coluna 3: Especializados & Planejamento
-        { id: 'acomodacao', name: 'ACOMODAÇÃO', col: 3, count: 10, supervisors: 0 },
-        { id: 'analista', name: 'ANALISTA', col: 3, count: 10, supervisors: 0 },
-        { id: 'b2b', name: 'B2B', col: 3, count: 10, supervisors: 0 },
-        { id: 'planejamento', name: 'PLANEJAMENTO', col: 3, count: 8, supervisors: 0 }
+        // Ala Sul Direita: Gestão & Qualidade (SALA S-05 a SALA S-07)
+        { id: 'coordenacao',    roomCode: 'SALA S-05 (SALA REUNIÃO & GESTÃO)', name: 'COORDENAÇÃO OPERACIONAL', col: 2, count: 6,  supervisors: 0, tag: 'SALA DE GESTÃO', color: 'orange',  tagColor: 'orange', subtitle: 'Supervisão de tráfego aéreo e plantão de atendimento.', extraNote: '(Lotação 100%)' },
+        { id: 'analista_admin', roomCode: 'SALA S-06',                         name: 'ANALISTA E ADMIN',        col: 2, count: 10, supervisors: 0, tag: 'Staff',          color: 'emerald', tagColor: 'slate' },
+        { id: 'qualidade',      roomCode: 'SALA S-07',                         name: 'QUALIDADE & MONITORIA',   col: 2, count: 8,  supervisors: 0, tag: 'Auditoria',      color: 'emerald', tagColor: 'slate' }
       ];
 
       let sectorsData = [];
 
       function loadSectorsData() {
-        const stored = localStorage.getItem('sectors_headcount_v2');
+        const stored = localStorage.getItem('sectors_headcount_v3');
         if (stored) {
           try {
-            sectorsData = JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            sectorsData = DEFAULT_SECTORS_DATA.map(def => {
+              const found = parsed.find(p => p.id === def.id);
+              return found ? { ...def, count: found.count, supervisors: (found.supervisors !== undefined ? found.supervisors : def.supervisors) } : { ...def };
+            });
           } catch(e) {
             sectorsData = JSON.parse(JSON.stringify(DEFAULT_SECTORS_DATA));
           }
@@ -2847,7 +3401,7 @@
       }
 
       function saveSectorsData() {
-        localStorage.setItem('sectors_headcount_v2', JSON.stringify(sectorsData));
+        localStorage.setItem('sectors_headcount_v3', JSON.stringify(sectorsData));
         if (firebaseOnline && db) {
           try {
             db.collection('settings').doc('sectors').set({
@@ -2860,6 +3414,18 @@
         }
       }
 
+      function buildDotsHtml(count, supervisors = 0) {
+        let html = '<div class="pa-dots-grid">';
+        for (let i = 0; i < count; i++) {
+          html += '<span class="pa-dot"></span>';
+        }
+        for (let s = 0; s < supervisors; s++) {
+          html += '<span class="pa-dot sup" title="Supervisor"></span>';
+        }
+        html += '</div>';
+        return html;
+      }
+
       function renderSectorsSection() {
         loadSectorsData();
 
@@ -2870,20 +3436,20 @@
 
         if (gestorSectorNoticeEl) {
           if (isGestor) {
-            gestorSectorNoticeEl.innerHTML = '⚙️ Modo Gestor Ativo: Altere as quantidades com + e -';
-            gestorSectorNoticeEl.style.borderColor = 'var(--border-gol-orange)';
-            gestorSectorNoticeEl.style.color = 'var(--gol-orange)';
+            gestorSectorNoticeEl.innerHTML = '● Modo Gestor Ativo: Altere as quantidades com + e -';
+            gestorSectorNoticeEl.style.borderColor = 'rgba(255, 106, 0, 0.35)';
+            gestorSectorNoticeEl.style.color = '#FF6A00';
           } else {
-            gestorSectorNoticeEl.innerHTML = '👁️ Visão Geral (Modo Leitura)';
-            gestorSectorNoticeEl.style.borderColor = 'var(--border-card)';
-            gestorSectorNoticeEl.style.color = 'var(--text-muted)';
+            gestorSectorNoticeEl.innerHTML = '👁️ Visão Geral da Planta (Modo Leitura)';
+            gestorSectorNoticeEl.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+            gestorSectorNoticeEl.style.color = '#94A3B8';
           }
         }
 
         if (btnResetSectors) {
-          btnResetSectors.style.display = isGestor ? 'inline-block' : 'none';
+          btnResetSectors.style.display = isGestor ? 'inline-flex' : 'none';
           btnResetSectors.onclick = () => {
-            if (confirm("Deseja restaurar as quantidades originais de todos os setores?")) {
+            if (confirm("Deseja restaurar as quantidades originais de todas as salas da planta?")) {
               sectorsData = JSON.parse(JSON.stringify(DEFAULT_SECTORS_DATA));
               saveSectorsData();
               renderSectorsSection();
@@ -2910,53 +3476,93 @@
           else if (item.col === 2) col2Total += itemTotal;
           else if (item.col === 3) col3Total += itemTotal;
 
-          const card = document.createElement('div');
-          card.className = 'setor-gol-item';
-
-          let controlsHtml = '';
+          let stepperHtml = '';
           if (isGestor) {
-            controlsHtml = `
-              <div class="desk-quick-actions" style="margin-left: 8px;">
-                <button type="button" class="btn-qty btn-dec-person" data-id="${item.id}" title="Diminuir Pessoas">-</button>
-                <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; width: 20px; text-align: center; color: #FFF;">${item.count}</span>
-                <button type="button" class="btn-qty btn-inc-person" data-id="${item.id}" title="Aumentar Pessoas">+</button>
+            stepperHtml = `
+              <div class="pa-stepper">
+                <button type="button" class="btn-dec-person" data-id="${item.id}" title="Diminuir PA">&minus;</button>
+                <span class="pa-val">${item.count}</span>
+                <button type="button" class="btn-inc-person" data-id="${item.id}" title="Aumentar PA">+</button>
               </div>
             `;
           }
 
-          let detailHtml = '';
-          if (item.supervisors > 0) {
-            detailHtml = `<div class="sdetail">${item.count} + ${item.supervisors} supervisor${item.supervisors > 1 ? 'es' : ''}</div>`;
+          if (item.col === 1) {
+            // Card da Ala Norte (SALA N-01 a SALA N-08)
+            const card = document.createElement('div');
+            card.className = 'sala-norte-card';
+
+            const badgeText = item.supervisors > 0
+              ? `${item.count}+${item.supervisors} Sup`
+              : `${itemTotal} PAs`;
+
+            card.innerHTML = `
+              <div>
+                <div class="sala-top-meta">
+                  <span class="sala-code">${item.roomCode}</span>
+                  <span class="sala-mini-badge">${badgeText}</span>
+                </div>
+                <div class="sala-title">${item.name}</div>
+                ${buildDotsHtml(item.count, item.supervisors || 0)}
+              </div>
+              <div class="sala-bottom-bar">
+                <span class="sala-total-number">${itemTotal}</span>
+                ${stepperHtml}
+              </div>
+            `;
+            if (col1El) col1El.appendChild(card);
+          } else {
+            // Card da Ala Sul (Especializados ou Gestão & Qualidade)
+            const card = document.createElement('div');
+            card.className = `sala-sul-card ${item.color || 'blue'}`;
+
+            const middleContent = item.subtitle
+              ? `<div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 6px;">${item.subtitle}</div>`
+              : buildDotsHtml(item.count, item.supervisors || 0);
+
+            const extraNoteHtml = item.extraNote
+              ? `<span style="font-family: var(--font-sans); font-size: 0.68rem; font-weight: 400; color: #64748B; margin-left: 6px;">${item.extraNote}</span>`
+              : '';
+
+            card.innerHTML = `
+              <div>
+                <div class="sala-top-meta">
+                  <span class="sala-code">${item.roomCode}</span>
+                  <span class="sala-sul-tag ${item.tagColor || item.color || 'blue'}">${item.tag || ''}</span>
+                </div>
+                <div class="sala-title" style="font-size: 0.84rem;">${item.name}</div>
+                ${middleContent}
+              </div>
+              <div class="sala-bottom-bar">
+                <div>
+                  <span class="sala-sul-total">${itemTotal} PA</span>
+                  ${extraNoteHtml}
+                </div>
+                ${stepperHtml}
+              </div>
+            `;
+
+            if (item.col === 2 && col2El) col2El.appendChild(card);
+            else if (item.col === 3 && col3El) col3El.appendChild(card);
           }
-
-          card.innerHTML = `
-            <div>
-              <div class="sname">${item.name}</div>
-              ${detailHtml}
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <div class="scount">${itemTotal}</div>
-              ${controlsHtml}
-            </div>
-          `;
-
-          if (item.col === 1 && col1El) col1El.appendChild(card);
-          else if (item.col === 2 && col2El) col2El.appendChild(card);
-          else if (item.col === 3 && col3El) col3El.appendChild(card);
         });
 
-        // Update KPIs
+        // Update KPIs & Headers
         const totalEl = document.getElementById('sectorsTotalCount');
         const avgEl = document.getElementById('sectorsAverageCount');
         const col1Badge = document.getElementById('col1TotalBadge');
         const col2Badge = document.getElementById('col2TotalBadge');
         const col3Badge = document.getElementById('col3TotalBadge');
+        const alaSulBadge = document.getElementById('alaSulTotalBadge');
+        const croquiMaxCapEl = document.getElementById('croquiMaxCapText');
 
         if (totalEl) totalEl.textContent = totalHeadcount;
         if (avgEl) avgEl.textContent = sectorsData.length > 0 ? (totalHeadcount / sectorsData.length).toFixed(1) : 0;
-        if (col1Badge) col1Badge.textContent = `${col1Total} PAs`;
+        if (col1Badge) col1Badge.textContent = `TOTAL: ${col1Total} PAS`;
         if (col2Badge) col2Badge.textContent = `${col2Total} PAs`;
         if (col3Badge) col3Badge.textContent = `${col3Total} PAs`;
+        if (alaSulBadge) alaSulBadge.textContent = `TOTAL: ${col2Total + col3Total} PAS (${col2Total} GESTÃO + ${col3Total} ESPECIALIZADOS)`;
+        if (croquiMaxCapEl) croquiMaxCapEl.textContent = `CAPACIDADE MÁXIMA DA ALA: ${totalHeadcount} PAs`;
 
         // Event listeners for Gestor controls
         if (isGestor) {
@@ -2978,19 +3584,6 @@
               const sector = sectorsData.find(s => s.id === id);
               if (sector) {
                 sector.count++;
-                saveSectorsData();
-                renderSectorsSection();
-              }
-            };
-          });
-
-          document.querySelectorAll('.input-person-qty').forEach(input => {
-            input.onchange = () => {
-              const id = input.dataset.id;
-              const sector = sectorsData.find(s => s.id === id);
-              const val = parseInt(input.value);
-              if (sector && !isNaN(val) && val >= 0) {
-                sector.count = val;
                 saveSectorsData();
                 renderSectorsSection();
               }
