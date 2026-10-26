@@ -741,6 +741,115 @@
       transform: translateY(-2px);
     }
 
+    /* THUMBNAIL DE FOTO REAL DAS SALAS */
+    .sala-photo-thumb {
+      position: relative;
+      height: 56px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #0B0F19;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 8px;
+    }
+    .sala-photo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.82;
+      transition: opacity 0.2s ease, transform 0.25s ease;
+    }
+    .sala-norte-card:hover .sala-photo-thumb img,
+    .sala-sul-card:hover .sala-photo-thumb img {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+    .sala-photo-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(7, 10, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #CBD5E1;
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      padding: 1px 4px;
+      border-radius: 3px;
+      pointer-events: none;
+    }
+
+    /* BANNER DE FOTO DESTAQUE DA COORDENAÇÃO OPERACIONAL (SALA S-05) */
+    .sala-hero-photo {
+      position: relative;
+      height: 96px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #070A12;
+      border: 1px solid rgba(255, 106, 0, 0.4);
+      margin-bottom: 10px;
+    }
+    .sala-hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .sala-sul-card:hover .sala-hero-photo img {
+      transform: scale(1.04);
+    }
+    .sala-hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7, 10, 18, 0.88), transparent 60%);
+      pointer-events: none;
+    }
+    .sala-hero-top-left {
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(7, 10, 18, 0.9);
+      border: 1px solid rgba(255, 106, 0, 0.5);
+      color: #FF6A00;
+      font-size: 0.62rem;
+      font-weight: 700;
+    }
+    .sala-hero-top-left .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #FF6A00;
+    }
+    .sala-hero-top-right {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 106, 0, 0.22);
+      border: 1px solid rgba(255, 106, 0, 0.45);
+      color: #FF6A00;
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .sala-hero-bottom-right {
+      position: absolute;
+      bottom: 6px;
+      right: 8px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(11, 15, 25, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #CBD5E1;
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+    }
+
     .sala-top-meta {
       display: flex;
       justify-content: space-between;
@@ -3358,27 +3467,38 @@
       // ==========================================================================
       // LÓGICA DE DIMENSIONAMENTO E ALOCAÇÃO DE SETORES & EQUIPES (CROQUI v2.4)
       // ==========================================================================
+      const PHOTO_SMILES = 'https://lh3.googleusercontent.com/aida/AEtjO1UnqtweDkOof05e9Ye9PP3rOQFoBjVVYLgVemgmsw-DGdDNBohZsg_Hu0Z2-2xXu8UxhUEtd3Y1Es2vXCmkVAB8PHAoEXk9l-QxoWHtAPTA0JlCXsedFW1ZhzvWuumIZShgcPqOta109d0Y5Ajwd6IzR3AHjzFH-LbFCxYr3mRZA2-k7klGSXc26QDIWoZq3R6qEhjfe1evpeTFD63uwm9CzE5wBwcECY72sj4Ibvg4VfwXko8hwUqq-G8';
+      const PHOTO_CANAIS = 'https://lh3.googleusercontent.com/aida/AEtjO1WeuL6anL7-imumr86R80kK5hprBEUc4KQhx2VryLvukCG0NVuqutiUfitbSot4a5UZNGN6ybluA7ZZWnB3MPkVPROL9WL_lBXG7Ihfrmx4xa3eANw1UkcOq-XO1wOM_AXvQALh5b4B4B1jaaCpvM59tnHNwteD4TSC1UN8b_KgOyPKGIweA58DAy123NIWTjXbX60DEIyWtW5OO2RYXouuG1JNsycVl0UGHm1sBqKxfKgDI4ftIxRwH9w';
+      const PHOTO_MAGNO = 'https://lh3.googleusercontent.com/aida/AEtjO1Xxxez4BhkrkW9-f2l6tWdtXAFW21xL-Ly8qpsV7uT3npOr5ESM3a_MRHXiS8UaKsayTM_HuT5Q6ISyOaeadVdapH0ml2UvQsoIc9cCm6HDtgu1rP_XjXGA4gxIpOcNO5aqP1C1Q7ux1NmBE4cmvdLFpBxdpNbyowWcMgaJHuC7q5owfxvYhqaiuCwaUQwknXhw1j8JzvtVvatGAvcfsawT65r91ResiWThkDdF8ZZHO23Woi3qvdQJvhY';
+      const PHOTO_ACOMODACAO = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBUsUaVUKZTru3r66Kc21jyzkQf9_N5GWRxfozpYTQkdgYeLNfjnGt26sKdSYrd6_3gqG7m5YarNOuQBMcBka8PBL8cVJfEbbnhp2W3rPQn7M61-O9YWeLXW68beWS1Erfy7YYatyJTGsW8owMPVvXKwL7qzzrVss5GNZXUo-XolmA5FKzQZrm1ZR_rQcNz4GvNn_1o-TZ0ryCI0fdrj0kicpQA7wQQrk9wXIANFtzybbAuPl4StdFxQx8rkdTluA-RhA';
+      const PHOTO_ANALISTA = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClEEo7lyp29CW6TkbT4GNWqjB3nJ-nLQq2FD-J1ARoVNhQQj-UESrb8Gy9-YYgyJg79_xwSKoZsGkKbsDLZfAH0kGlMOVdS9uDCr50SIzQ12KHWSMrrX6B0c7EJJh4XjStMTu71BOMlC-ITUrHD9866aXprB_PlXhHKQSnbNY4RaQdwJBekZgFKArgT5aIm1fmp_Xpg4BQZ_Xu2OGYrEtq1gYeGfHhxuWHjtDo193PaP8cVwrc9e1X16to-ndUoEaujA';
+      const PHOTO_B2B = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnpQIy_vQKYH43Ck1HRGXosf60bjFbBEwzAbACgx7IoPxJO1YBhb9jD4Lpy_0jovWpSo-C-0IAqPEFt4M_ISUllaZiCpbt0S0J8CtOmPPudIaRIDW4JTCBvUk2SjYL1iD321vQ2Xssvo0LOcNqIpc8ye9KGM3k_X_t3cs1UWbb6N0qi8Qt-aJFVwxxSSGH2rW0XWOjXHn9TXEapUBzlCKGaZkGaNS8rmVqouDvSIe05Niczcy-bZQkhwYTPcndHrpgmg';
+      const PHOTO_PLANEJAMENTO = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAO6rliHITGydtfg9d17TSa4Nov68-2gx2fBmZKxHrOtsZVCHkanKOnzN2SNfs-boBEtxzJ4DWpE5CLFLotHuo5JyM2c4ktc4MJsyJsigcCZW9ySUD6GeMJ_sgsnVwOsGu4mOLE6YeP8GP2lQg4R2JNcBFFu5eMYHR8xkx0o-VFF3UovFiK0PzU7_cSiZgYmWIlDPZIH-pplNg8VEpbL-r_RED5weOl4DLAd8V1pkRe-GFaIK83kAzzuuoX7y3J-Cyvjg';
+      const PHOTO_COORDENACAO = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBamGNrTiGl_NZYKgkTXDMgqr-uwdvaDWqnoQSSJBnc73RqpIgS_H6cdoNrPrCTIdTHFlSla2LRmZ9X362lV0hH_Y1I-h-8lhVfaZvqDQmGE_TFlru1rw5iqMOZPflXMZyksuOrDJt40eUygbU00euibZNyBfnt4Npn9vuPMwyYlMXmQJO7pqkDM1DGhRY1Udt_OzX0TEd5ieGrRWKhniCEl6Ph3e8fxZxLAvwGI375GhykxF3OCZFgho0FJLsv1JsKXg';
+      const PHOTO_ANALISTA_ADMIN = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBueRhYUm9iYXiwPvzy63hD0vnnflBQpyLYn27uYYdHe2qq6AbSDO7suydba2EeTbKYHUgZJCCQKjVzg_0q8xnKiwk94R7sYg5lMLldZI57-9zGLE2jX2ZEIhUs8C36AQYKgdrJ3C6V1UpGFLZx-Enn6GlZ9OegFPXjfv0iLJ1lj71OHNOeA5MnAlwo0D_6p9PTpWhyoGvRUcZringSfOqXm415CfdTKYphBhDcb5eNbel4drG6Qs13f1o3I_2uKZLlCg';
+      const PHOTO_QUALIDADE = 'https://lh3.googleusercontent.com/aida/AEtjO1V4xfS_2uZbUj8BJbXzf73vGKJDxFnPd8uUWE0MzNaSKM1i4D-3k2QC76Y6pH3X8Z5CVuJtEqtFspymGj363XYZgWpyQDGu2RDT4T4KInorbij5K55bGwQl1BPkACG3bJ-6GgPLxSAj_v2OViM2qibgWkwCFoJg8ExyBvqmLaZCTslF8JIc0sgsEhFJhcOdA_kunXCSJ5HLO8vE8hMugZCXej2rEvvK21pKpbn78KbQlnq60KZaALqyNw';
+
       const DEFAULT_SECTORS_DATA = [
         // Ala Norte: Operação & Smiles (SALA N-01 a SALA N-08)
-        { id: 'smiles_4', roomCode: 'SALA N-01', name: 'SMILES (Op. 4)', col: 1, count: 8, supervisors: 2 },
-        { id: 'smiles_3', roomCode: 'SALA N-02', name: 'SMILES (Op. 3)', col: 1, count: 9, supervisors: 2 },
-        { id: 'smiles_2', roomCode: 'SALA N-03', name: 'SMILES (Op. 2)', col: 1, count: 10, supervisors: 0 },
-        { id: 'smiles_1', roomCode: 'SALA N-04', name: 'SMILES (Op. 1)', col: 1, count: 11, supervisors: 1 },
-        { id: 'canais_3', roomCode: 'SALA N-05', name: 'CANAIS (Grupo 3)', col: 1, count: 14, supervisors: 0 },
-        { id: 'canais_2', roomCode: 'SALA N-06', name: 'CANAIS (Grupo 2)', col: 1, count: 14, supervisors: 0 },
-        { id: 'canais_1', roomCode: 'SALA N-07', name: 'CANAIS (Grupo 1)', col: 1, count: 12, supervisors: 0 },
-        { id: 'magno',    roomCode: 'SALA N-08', name: 'MAGNO', col: 1, count: 7, supervisors: 0 },
+        { id: 'smiles_4', roomCode: 'SALA N-01', name: 'SMILES (Op. 4)', col: 1, count: 8, supervisors: 2, photo: PHOTO_SMILES },
+        { id: 'smiles_3', roomCode: 'SALA N-02', name: 'SMILES (Op. 3)', col: 1, count: 9, supervisors: 2, photo: PHOTO_SMILES },
+        { id: 'smiles_2', roomCode: 'SALA N-03', name: 'SMILES (Op. 2)', col: 1, count: 10, supervisors: 0, photo: PHOTO_SMILES },
+        { id: 'smiles_1', roomCode: 'SALA N-04', name: 'SMILES (Op. 1)', col: 1, count: 11, supervisors: 1, photo: PHOTO_SMILES },
+        { id: 'canais_3', roomCode: 'SALA N-05', name: 'CANAIS (Grupo 3)', col: 1, count: 14, supervisors: 0, photo: PHOTO_CANAIS },
+        { id: 'canais_2', roomCode: 'SALA N-06', name: 'CANAIS (Grupo 2)', col: 1, count: 14, supervisors: 0, photo: PHOTO_CANAIS },
+        { id: 'canais_1', roomCode: 'SALA N-07', name: 'CANAIS (Grupo 1)', col: 1, count: 12, supervisors: 0, photo: PHOTO_CANAIS },
+        { id: 'magno',    roomCode: 'SALA N-08', name: 'MAGNO', col: 1, count: 7, supervisors: 0, photo: PHOTO_MAGNO },
 
         // Ala Sul Esquerda: Especializados (SALA S-01 a SALA S-04)
-        { id: 'acomodacao',   roomCode: 'SALA S-01', name: 'ACOMODAÇÃO',    col: 3, count: 10, supervisors: 0, tag: 'Turnos',          color: 'amber',  tagColor: 'amber' },
-        { id: 'analista',     roomCode: 'SALA S-02', name: 'ANALISTA',      col: 3, count: 10, supervisors: 0, tag: 'Operações',       color: 'cyan',   tagColor: 'cyan' },
-        { id: 'b2b',          roomCode: 'SALA S-03', name: 'B2B CORPORATE', col: 3, count: 10, supervisors: 0, tag: 'Corporativo',     color: 'blue',   tagColor: 'blue' },
-        { id: 'planejamento', roomCode: 'SALA S-04', name: 'PLANEJAMENTO',  col: 3, count: 8,  supervisors: 0, tag: 'Malha & Escalas', color: 'purple', tagColor: 'purple' },
+        { id: 'acomodacao',   roomCode: 'SALA S-01', name: 'ACOMODAÇÃO',    col: 3, count: 10, supervisors: 0, tag: 'Turnos',          color: 'amber',  tagColor: 'amber',  photo: PHOTO_ACOMODACAO },
+        { id: 'analista',     roomCode: 'SALA S-02', name: 'ANALISTA',      col: 3, count: 10, supervisors: 0, tag: 'Operações',       color: 'cyan',   tagColor: 'cyan',   photo: PHOTO_ANALISTA },
+        { id: 'b2b',          roomCode: 'SALA S-03', name: 'B2B CORPORATE', col: 3, count: 10, supervisors: 0, tag: 'Corporativo',     color: 'blue',   tagColor: 'blue',   photo: PHOTO_B2B },
+        { id: 'planejamento', roomCode: 'SALA S-04', name: 'PLANEJAMENTO',  col: 3, count: 8,  supervisors: 0, tag: 'Malha & Escalas', color: 'purple', tagColor: 'purple', photo: PHOTO_PLANEJAMENTO },
 
         // Ala Sul Direita: Gestão & Qualidade (SALA S-05 a SALA S-07)
-        { id: 'coordenacao',    roomCode: 'SALA S-05 (SALA REUNIÃO & GESTÃO)', name: 'COORDENAÇÃO OPERACIONAL', col: 2, count: 6,  supervisors: 0, tag: 'SALA DE GESTÃO', color: 'orange',  tagColor: 'orange', subtitle: 'Supervisão de tráfego aéreo e plantão de atendimento.', extraNote: '(Lotação 100%)' },
-        { id: 'analista_admin', roomCode: 'SALA S-06',                         name: 'ANALISTA E ADMIN',        col: 2, count: 10, supervisors: 0, tag: 'Staff',          color: 'emerald', tagColor: 'slate' },
-        { id: 'qualidade',      roomCode: 'SALA S-07',                         name: 'QUALIDADE & MONITORIA',   col: 2, count: 8,  supervisors: 0, tag: 'Auditoria',      color: 'emerald', tagColor: 'slate' }
+        { id: 'coordenacao',    roomCode: 'SALA S-05 (SALA REUNIÃO & GESTÃO)', name: 'COORDENAÇÃO OPERACIONAL', col: 2, count: 6,  supervisors: 0, tag: 'SALA DE GESTÃO', color: 'orange',  tagColor: 'orange', subtitle: 'Supervisão de tráfego aéreo e plantão de atendimento.', extraNote: '(Lotação 100%)', photo: PHOTO_COORDENACAO, isHeroPhoto: true },
+        { id: 'analista_admin', roomCode: 'SALA S-06',                         name: 'ANALISTA E ADMIN',        col: 2, count: 10, supervisors: 0, tag: 'Staff',          color: 'emerald', tagColor: 'slate',  photo: PHOTO_ANALISTA_ADMIN },
+        { id: 'qualidade',      roomCode: 'SALA S-07',                         name: 'QUALIDADE & MONITORIA',   col: 2, count: 8,  supervisors: 0, tag: 'Auditoria',      color: 'emerald', tagColor: 'slate',  photo: PHOTO_QUALIDADE }
       ];
 
       let sectorsData = [];
@@ -3496,8 +3616,16 @@
               ? `${item.count}+${item.supervisors} Sup`
               : `${itemTotal} PAs`;
 
+            const photoHtml = item.photo
+              ? `<div class="sala-photo-thumb">
+                   <img src="${item.photo}" alt="${item.name}" loading="lazy">
+                   <span class="sala-photo-badge">📷 Foto Real</span>
+                 </div>`
+              : '';
+
             card.innerHTML = `
               <div>
+                ${photoHtml}
                 <div class="sala-top-meta">
                   <span class="sala-code">${item.roomCode}</span>
                   <span class="sala-mini-badge">${badgeText}</span>
@@ -3524,12 +3652,48 @@
               ? `<span style="font-family: var(--font-sans); font-size: 0.68rem; font-weight: 400; color: #64748B; margin-left: 6px;">${item.extraNote}</span>`
               : '';
 
-            card.innerHTML = `
-              <div>
+            let photoSulHtml = '';
+            let topMetaHtml = '';
+
+            if (item.isHeroPhoto && item.photo) {
+              photoSulHtml = `
+                <div class="sala-hero-photo">
+                  <img src="${item.photo}" alt="${item.name}" loading="lazy">
+                  <div class="sala-hero-gradient"></div>
+                  <div class="sala-hero-top-left">
+                    <span class="pulse-dot"></span>
+                    <span>Foto do Espaço: Coordenadoria &amp; Lousa GOL</span>
+                  </div>
+                  <div class="sala-hero-top-right">${item.tag || 'SALA DE GESTÃO'}</div>
+                  <div class="sala-hero-bottom-right">Central de Operações GOL</div>
+                </div>
+              `;
+              topMetaHtml = `
+                <div class="sala-top-meta">
+                  <span class="sala-code">${item.roomCode}</span>
+                </div>
+              `;
+            } else {
+              if (item.photo) {
+                photoSulHtml = `
+                  <div class="sala-photo-thumb">
+                    <img src="${item.photo}" alt="${item.name}" loading="lazy">
+                    <span class="sala-photo-badge">📷 Foto Real</span>
+                  </div>
+                `;
+              }
+              topMetaHtml = `
                 <div class="sala-top-meta">
                   <span class="sala-code">${item.roomCode}</span>
                   <span class="sala-sul-tag ${item.tagColor || item.color || 'blue'}">${item.tag || ''}</span>
                 </div>
+              `;
+            }
+
+            card.innerHTML = `
+              <div>
+                ${photoSulHtml}
+                ${topMetaHtml}
                 <div class="sala-title" style="font-size: 0.84rem;">${item.name}</div>
                 ${middleContent}
               </div>
